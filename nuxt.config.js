@@ -8,12 +8,17 @@ export default {
       { hid: 'description', name: 'description', content: '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      {
+        rel: 'stylesheet',
+        href: 'https://use.fontawesome.com/releases/v5.6.1/css/all.css',
+      },
     ]
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
   css: [
+    '~/assets/scss/app.scss'
   ],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
@@ -35,8 +40,17 @@ export default {
     '@nuxtjs/axios',
   ],
 
+  styleResources: {
+    scss: ['@/assets/scss/_color.scss'],
+  },
+
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {},
+
+  bootstrapVue: {
+    bootstrapCSS: false,
+    bootstrapVueCSS: false,
+  },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
