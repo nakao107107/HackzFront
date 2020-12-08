@@ -1,1 +1,19 @@
 @import '~bootstrap/scss/bootstrap';
+
+body {
+  color: $default;
+}
+
+.modal {
+  &-backdrop {
+    opacity: 0;
+  }
+  &-body {
+    padding: 0;
+  }
+  &-content {
+    border: 1px solid $default;
+    background-color: $dark;
+    color: $white;
+  }
+}
