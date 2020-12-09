@@ -28,62 +28,26 @@
           <span>今日予定されているミーティングはありません</span>
         </div>
       </div>
-      <BModal
-        v-model="status.isCreateMeetingModalOpen"
-        size="md"
-        hide-footer
-        hide-header
-        centered
-        no-close-on-backdrop
-      >
-        <div class="p-4">
-          <h5 class="font-weight-bold">ミーティングをスケジューリング</h5>
-          <div class="form-group">
-            <label class="font-weight-bold">トピック</label>
-            <input class="form-control">
-          </div>
-          <div class="form-group">
-            <label class="font-weight-bold">日時</label>
-            <div class="d-flex align-items-center">
-              <input class="form-control" type="date">
-              <span class="mx-2">~</span>
-              <input class="form-control" type="date">
-            </div>
-          </div>
-          <div class="d-flex justify-content-end">
-            <button class="btn btn-outline-light mr-3" @click="closeCreateMeetingModal">キャンセル</button>
-            <button class="btn btn-secondary" @click="createMeeting">保存</button>
-          </div>
-        </div>
-      </BModal>
-      <BModal
-        v-model="status.isEnterMeetingModalOpen"
-        size="md"
-        hide-footer
-        hide-header
-        centered
-        no-close-on-backdrop
-      >
-        <div class="p-4">
-          <h5 class="font-weight-bold">ミーティングに参加</h5>
-          <div class="form-group">
-            <input class="form-control" placeholder="会議室ID" />
-          </div>
-          <div class="form-group">
-            <input class="form-control" placeholder="名前" />
-          </div>
-          <div class="d-flex justify-content-end">
-            <button class="btn btn-outline-light mr-3" @click="closeEnterMeetingModal">キャンセル</button>
-            <button class="btn btn-secondary" @click="enterMeeting">参加</button>
-          </div>
-        </div>
-      </BModal>
+      <CreateMeetingModal
+        :is-modal-open="status.isCreateMeetingModalOpen"
+        @close-modal="closeCreateMeetingModal"
+      />
+      <EnterMeetingModal
+        :is-modal-open="status.isEnterMeetingModalOpen"
+        @close-modal="closeEnterMeetingModal"
+      />
     </div>
   </div>
 </template>
 
 <script>
+import CreateMeetingModal from "~/components/home/CreateMeetingModal";
+import EnterMeetingModal from "~/components/home/CreateMeetingModal";
 export default {
+  components: {
+    CreateMeetingModal,
+    EnterMeetingModal
+  },
   data(){
     return {
       status: {
