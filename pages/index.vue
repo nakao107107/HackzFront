@@ -25,7 +25,15 @@
           <span class="date">{{date}}</span>
         </div>
         <div>
-          {{meetings}}
+          <div
+            v-for="meeting in meetings"
+            :key="meeting.id"
+          >
+            <h2>{{meeting.topic}}</h2>
+            <span>{{$moment(meeting.start_time).format('HH:mm')}} ~ {{$moment(meeting.end_time).format('HH:mm')}}</span>
+            <span>ミーティングID: {{meeting.id}}</span>
+            <button class="btn btn-sm btn-secondary">開始</button>
+          </div>
         </div>
       </div>
       <CreateMeetingModal
@@ -99,6 +107,7 @@ export default {
   }
 
   .menu-card {
+    width: 350px;
     border: 1px solid $default;
     border-radius: 10px;
     height: 50vh;
