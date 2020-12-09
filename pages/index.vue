@@ -52,7 +52,7 @@
 
 <script>
 import CreateMeetingModal from "~/components/home/CreateMeetingModal";
-import EnterMeetingModal from "~/components/home/CreateMeetingModal";
+import EnterMeetingModal from "~/components/home/EnterMeetingModal";
 import {mapGetters} from 'vuex';
 export default {
   async fetch({store}){
