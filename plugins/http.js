@@ -60,14 +60,7 @@ class Http {
   }
 
   async request(options) {
-    const session = await this._ctx.store.dispatch('auth/getCognitoSession')
-
-    const headers = {
-      Authorization: session ? session.getIdToken().getJwtToken() : null,
-    }
-
-    options.headers = headers
-    options.baseURL = process.env.API_BASE_URL
+    options.baseURL = process.env.API_URL
 
     const response = await this._axios(options).catch((err) => err.response)
     return this._responseBuilder(response)

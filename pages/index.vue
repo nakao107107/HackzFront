@@ -25,7 +25,7 @@
           <span class="date">{{date}}</span>
         </div>
         <div>
-          <span>今日予定されているミーティングはありません</span>
+          {{meetings}}
         </div>
       </div>
       <CreateMeetingModal
@@ -43,7 +43,11 @@
 <script>
 import CreateMeetingModal from "~/components/home/CreateMeetingModal";
 import EnterMeetingModal from "~/components/home/CreateMeetingModal";
+import {mapGetters} from 'vuex';
 export default {
+  async fetch({store}){
+    await store.dispatch('meetings/list/fetch')
+  },
   components: {
     CreateMeetingModal,
     EnterMeetingModal
@@ -57,6 +61,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('meetings/list', ['meetings']),
     time(){
       return this.$moment().format('HH:mm')
     },
@@ -75,12 +80,6 @@ export default {
       this.status.isCreateMeetingModalOpen = false
     },
     closeEnterMeetingModal(){
-      this.status.isEnterMeetingModalOpen = false
-    },
-    createMeeting(){
-      this.status.isCreateMeetingModalOpen = false
-    },
-    enterMeeting(){
       this.status.isEnterMeetingModalOpen = false
     }
   }
