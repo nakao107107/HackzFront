@@ -21,10 +21,12 @@
       <!--        予定されているミーティング一覧-->
       <div class="menu-card">
         <div class="clock">
-          <span class="time">{{time}}</span>
-          <span class="date">{{date}}</span>
+          <div class="text-center">
+            <span class="time">{{time}}</span>
+            <span class="date">{{date}}</span>
+          </div>
         </div>
-        <div>
+        <div class="meeting-list">
           <div
             v-for="meeting in meetings"
             :key="meeting.id"
@@ -110,12 +112,14 @@ export default {
     width: 350px;
     border: 1px solid $default;
     border-radius: 10px;
-    height: 50vh;
+    height: 400px;
   }
 
   .clock {
-    padding: 20px;
-    text-align: center;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     background-image: url('https://hackz.s3-ap-northeast-1.amazonaws.com/system/back_time.jpeg');
@@ -130,5 +134,11 @@ export default {
       display: block;
       font-size: 12px;
     }
+  }
+
+  .meeting-list {
+    padding: 10px;
+    height: 300px;
+    overflow-y: auto;
   }
 </style>
