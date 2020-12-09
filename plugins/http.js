@@ -60,8 +60,12 @@ class Http {
   }
 
   async request(options) {
+    const token = await this._ctx.store.getters['auth/token']
+    const headers = {
+      Authorization: token,
+    }
     options.baseURL = process.env.API_URL
-
+    options.headers = headers
     const response = await this._axios(options).catch((err) => err.response)
     return this._responseBuilder(response)
   }
