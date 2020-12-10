@@ -34,7 +34,7 @@
             <h2>{{meeting.topic}}</h2>
             <span>{{$moment(meeting.start_time).format('HH:mm')}} ~ {{$moment(meeting.end_time).format('HH:mm')}}</span>
             <span>ミーティングID: {{meeting.id}}</span>
-            <button class="btn btn-sm btn-secondary">開始</button>
+            <button class="btn btn-sm btn-secondary" @click="start(meeting.id)">開始</button>
           </div>
         </div>
       </div>
@@ -91,6 +91,11 @@ export default {
     },
     closeEnterMeetingModal(){
       this.status.isEnterMeetingModalOpen = false
+    },
+    async start(meetingId){
+      await this.$store.dispatch('meetings/detail/createRoom', meetingId)
+      await this.$store.dispatch('meetings/detail/attend', meetingId)
+      this.$router.push(`/meetings/${meetingId}/view`)
     }
   }
 }
