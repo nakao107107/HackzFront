@@ -63,6 +63,11 @@ export default {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
+    plugins: [
+      new webpack.ProvidePlugin({
+        _: 'lodash',
+      }),
+    ],
   },
 
   env: {

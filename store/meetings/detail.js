@@ -14,18 +14,6 @@ export const actions = {
   },
 
   /*
-  クラウド上で部屋を作成
-   */
-  async createRoom(ctx, meetingId) {
-    const { error } = await this.$http().post(
-      `/meetings/${meetingId}/room`,
-    )
-    if (error) {
-      throw new Error('ミーティングルーム作成に失敗しました')
-    }
-  },
-
-  /*
   meetingに参加
    */
   async attend(ctx, meetingId) {

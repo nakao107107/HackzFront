@@ -93,7 +93,7 @@ export default {
       this.status.isEnterMeetingModalOpen = false
     },
     async start(meetingId){
-      await this.$store.dispatch('meetings/detail/createRoom', meetingId)
+      await this.$store.dispatch('meetings/room/create', meetingId)
       await this.$store.dispatch('meetings/detail/attend', meetingId)
       this.$router.push(`/meetings/${meetingId}/view`)
     }
