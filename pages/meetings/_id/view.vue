@@ -1,7 +1,25 @@
 <template>
-  <div>
+  <div class="bg-dark vh-100 vw-100">
     <audio id="audio"/>
-    <video id="video"/>
+    <div>
+      <video id="video"/>
+    </div>
+    <div class="footer-menu d-flex justify-content-between">
+      <div class="d-flex">
+        <button class="btn" @click="switchMicStatus">
+          <i class="fas fa-microphone text-white" v-if="status.isMicOn"></i>
+          <i class="fas fa-microphone-slash text-white" v-else></i>
+        </button>
+        <button class="btn" @click="switchVideoStatus">
+          <i class="fas fa-video text-white" v-if="status.isVideoOn"></i>
+          <i class="fas fa-video-slash text-white" v-else></i>
+        </button>
+      </div>
+      <button class="btn">
+        <i class="fas fa-desktop text-success"></i>
+      </button>
+      <button class="btn btn-sm btn-danger">終了</button>
+    </div>
   </div>
 </template>
 
@@ -15,7 +33,11 @@
         micDevices: [],
         selectedMicDevice: '',
         audioDevices: [],
-        selectedAudioDevice: ''
+        selectedAudioDevice: '',
+        status: {
+          isMicOn: true,
+          isVideoOn: true
+        }
       }
     },
     async mounted() {
@@ -50,5 +72,41 @@
       this.meetingSession.audioVideo.startLocalVideoTile()
       this.meetingSession.audioVideo.start()
     },
+
+    methods: {
+      async switchVideoStatus(){
+        await this.meetingSession.audioVideo.chooseVideoInputDevice(
+          this.selectedVideoDevice
+        )
+        if (this.status.isVideoOn) {
+          //videoがオンの時
+          this.meetingSession.audioVideo.stopLocalVideoTile()
+          this.status.isVideoOn = false
+        } else {
+          //videoがオフの時
+          this.meetingSession.audioVideo.startLocalVideoTile()
+          this.status.isVideoOn = true
+        }
+      },
+      switchMicStatus(){
+        if (this.status.isMicOn) {
+          //マイクがオンの時
+          this.meetingSession.audioVideo.realtimeMuteLocalAudio()
+          this.status.isMicOn = false
+        } else {
+          //マイクがオフの時
+          this.meetingSession.audioVideo.realtimeUnmuteLocalAudio()
+          this.status.isMicOn = true
+        }
+      }
+    }
   }
 </script>
+
+<style lang="scss" scoped>
+  .footer-menu {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+</style>
