@@ -3,15 +3,27 @@
     <audio id="audio"/>
     <div class="video-container d-flex">
       <div
-        class="w-75 h-100 container"
+        class="w-75 h-100"
         :class="status.isSharingOn ? 'd-block' : 'd-none'"
       >
-        <video id="share" width="w-100 h-100" />
+        <video id="share" class="w-100 h-100" style="object-fit: contain"/>
       </div>
       <div
+        class="h-100"
         :class="status.isSharingOn ? 'w-25' : 'w-100'"
       >
-        <video id="video" class="w-100"/>
+        <div
+          v-for="attendee in attendees"
+          :id="`video-container-${attendee}`"
+          :key="attendee"
+          class="justify-content-center align-items-center p-2"
+          :class="status.isSharingOn ? 'w-100 h-25' : `attendee-num-${attendees.length}`"
+        >
+          <video
+            :id="`video-preview-${attendee}`"
+            class="w-100 h-100"
+          />
+        </div>
       </div>
     </div>
     <div class="footer-menu d-flex justify-content-between">
@@ -48,7 +60,8 @@
           isMicOn: true,
           isVideoOn: true,
           isSharingOn: false,
-        }
+        },
+        attendees: []
       }
     },
     async mounted() {
@@ -68,7 +81,9 @@
           }
           let videoElement = null
           const tileId = tileState.tileId
-          videoElement = document.getElementById('video')
+          console.log(`video-preview-${tileState.boundAttendeeId}`)
+          console.log(this.attendees)
+          videoElement = document.getElementById(`video-preview-${tileState.boundAttendeeId}`)
           this.meetingSession.audioVideo.bindVideoElement(tileId, videoElement)
         },
       }
@@ -104,6 +119,21 @@
           }
         },
       }
+
+      //入退出処理
+      const callback = async (presentAttendeeId, present) => {
+        if (present) {
+          this.attendees.push(presentAttendeeId)
+        } else {
+          //退出処理
+          this.attendees = this.attendees.filter(
+            (attendee) => attendee != presentAttendeeId
+          )
+        }
+      }
+      this.meetingSession.audioVideo.realtimeSubscribeToAttendeeIdPresence(
+        callback
+      )
 
       this.videoDevices = await this.meetingSession.audioVideo.listVideoInputDevices()
       this.selectedVideoDevice = this.videoDevices[0].deviceId
@@ -173,7 +203,7 @@
   }
   .attendee-num {
     &-1 {
-      width: 75%;
+      width: 100%;
       height: 100%;
     }
     &-2 {
