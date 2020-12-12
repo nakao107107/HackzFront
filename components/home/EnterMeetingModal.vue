@@ -10,10 +10,7 @@
     <div class="p-4">
       <h5 class="font-weight-bold">ミーティングに参加</h5>
       <div class="form-group">
-        <input class="form-control" placeholder="会議室ID" />
-      </div>
-      <div class="form-group">
-        <input class="form-control" placeholder="名前" />
+        <input class="form-control" placeholder="会議室ID" v-model="meetingId"/>
       </div>
       <div class="d-flex justify-content-end">
         <button class="btn btn-outline-light mr-3" @click="close">キャンセル</button>
@@ -31,9 +28,15 @@
         required: true
       }
     },
+    data(){
+      return {
+        meetingId: ''
+      }
+    },
     methods: {
-      enter(){
-        this.$emit('close-modal')
+      async enter(){
+        await this.$store.dispatch('meetings/detail/attend', this.meetingId)
+        this.$router.push(`/meetings/${this.meetingId}/view`)
       },
       close(){
         this.$emit('close-modal')
