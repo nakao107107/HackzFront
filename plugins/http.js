@@ -60,7 +60,7 @@ class Http {
   }
 
   async request(options) {
-    const token = await this._ctx.store.getters['auth/token']
+    const token = await this._ctx.store.dispatch('auth/getToken')
     const headers = {
       Authorization: token,
     }

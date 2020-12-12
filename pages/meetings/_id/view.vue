@@ -10,7 +10,7 @@
       </div>
       <div
         class="h-100"
-        :class="status.isSharingOn ? 'w-25' : 'w-100'"
+        :class="status.isSharingOn ? 'w-25' : 'row w-100'"
       >
         <div
           v-for="attendee in attendees"
@@ -70,19 +70,18 @@
         this.$route.params.id
       )
 
-      //localTile専用のobserver
-      const localObserver = {
+      //attendee専用のobserver
+      const attendeeObserver = {
         videoTileDidUpdate: (tileState) => {
           if (!tileState.boundExternalUserId) {
             return
           }
-          if (!tileState.localTile) {
+          if(tileState.isContent){
             return
           }
+
           let videoElement = null
           const tileId = tileState.tileId
-          console.log(`video-preview-${tileState.boundAttendeeId}`)
-          console.log(this.attendees)
           videoElement = document.getElementById(`video-preview-${tileState.boundAttendeeId}`)
           this.meetingSession.audioVideo.bindVideoElement(tileId, videoElement)
         },
@@ -106,10 +105,12 @@
         },
         //自分の画面共有開始時
         contentShareDidStart: () => {
+          console.log("画面共有")
           this.status.isSharingOn = true
         },
         //自分の画面共有停止時
         contentShareDidStop: () => {
+          console.log("画面共有停止")
           this.status.isSharingOn = false
         },
         //他人の画面共有停止時
@@ -147,7 +148,7 @@
 
       const audioElement = document.getElementById('audio')
       this.meetingSession.audioVideo.bindAudioElement(audioElement)
-      this.meetingSession.audioVideo.addObserver(localObserver)
+      this.meetingSession.audioVideo.addObserver(attendeeObserver)
       this.meetingSession.audioVideo.addObserver(shareObserver)
       this.meetingSession.audioVideo.addContentShareObserver(shareObserver)
       this.meetingSession.audioVideo.startLocalVideoTile()
