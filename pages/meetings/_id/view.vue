@@ -15,6 +15,7 @@
         <div
           id="`video-container-1"
           class="justify-content-center align-items-center p-2 d-flex w-50 h-50"
+          :class="{'d-none': videoTileInfo.find(tile => tile.tileNum == 1 && tile.attendeeId != '')}"
         >
           <video
             id="video-preview-1"
@@ -24,6 +25,7 @@
         <div
           id="`video-container-2"
           class="justify-content-center align-items-center p-2 d-flex w-50 h-50"
+          :class="{'d-none': videoTileInfo.find(tile => tile.tileNum == 2 && tile.attendeeId != '')}"
         >
           <video
             id="video-preview-2"
@@ -33,6 +35,7 @@
         <div
           id="`video-container-3"
           class="justify-content-center align-items-center p-2 d-flex w-50 h-50"
+          :class="{'d-none': videoTileInfo.find(tile => tile.tileNum == 3 && tile.attendeeId != '')}"
         >
           <video
             id="video-preview-3"
@@ -42,6 +45,7 @@
         <div
           id="`video-container-4"
           class="justify-content-center align-items-center p-2 d-flex w-50 h-50"
+          :class="{'d-none': videoTileInfo.find(tile => tile.tileNum == 4 && tile.attendeeId != '')}"
         >
           <video
             id="video-preview-4"
@@ -119,8 +123,6 @@
               return
             }
           }
-
-
           //空いているタイルにattendeeをbind
           targetTile.attendeeId = tileState.boundAttendeeId
           targetTile.tileId = tileState.tileId
@@ -166,8 +168,8 @@
 
       //入退出処理
       const callback = async (presentAttendeeId, present) => {
+        let targetTile = this.videoTileInfo.find((tile) => tile.attendeeId == presentAttendeeId)
         if (present) {
-          let targetTile = this.videoTileInfo.find((tile) => tile.attendeeId == presentAttendeeId)
           if(! targetTile){
             //空いているタイルの検索
             targetTile = this.videoTileInfo.find((tile) => tile.attendeeId == '')
@@ -180,6 +182,10 @@
           targetTile.attendeeId = presentAttendeeId
           targetTile.tileId = 0
         } else {
+          if(targetTile){
+            targetTile.tileId = 0
+            targetTile.attendeeId = ''
+          }
         }
       }
       this.meetingSession.audioVideo.realtimeSubscribeToAttendeeIdPresence(
