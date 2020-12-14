@@ -14,8 +14,11 @@
       >
         <div
           id="`video-container-1"
-          class="justify-content-center align-items-center p-2 d-flex w-50 h-50"
-          :class="{'d-none': videoTileInfo.find(tile => tile.tileNum == 1 && tile.attendeeId != '')}"
+          class="justify-content-center align-items-center p-2"
+          :class="[
+            videoTileInfo.find(tile => tile.tileNum == 1 && tile.attendeeId != '') ? 'd-flex' : 'd-none',
+            status.isSharingOn ? 'w-100 h-25' : `attendee-num-${attendeeNum}`
+          ]"
         >
           <video
             id="video-preview-1"
@@ -24,8 +27,11 @@
         </div>
         <div
           id="`video-container-2"
-          class="justify-content-center align-items-center p-2 d-flex w-50 h-50"
-          :class="{'d-none': videoTileInfo.find(tile => tile.tileNum == 2 && tile.attendeeId != '')}"
+          class="justify-content-center align-items-center p-2"
+          :class="[
+            videoTileInfo.find(tile => tile.tileNum == 2 && tile.attendeeId != '') ? 'd-flex' : 'd-none',
+            `attendee-num-${attendeeNum}`
+          ]"
         >
           <video
             id="video-preview-2"
@@ -34,8 +40,11 @@
         </div>
         <div
           id="`video-container-3"
-          class="justify-content-center align-items-center p-2 d-flex w-50 h-50"
-          :class="{'d-none': videoTileInfo.find(tile => tile.tileNum == 3 && tile.attendeeId != '')}"
+          class="justify-content-center align-items-center p-2"
+          :class="[
+            videoTileInfo.find(tile => tile.tileNum == 3 && tile.attendeeId != '') ? 'd-flex' : 'd-none',
+            `attendee-num-${attendeeNum}`
+          ]"
         >
           <video
             id="video-preview-3"
@@ -44,8 +53,11 @@
         </div>
         <div
           id="`video-container-4"
-          class="justify-content-center align-items-center p-2 d-flex w-50 h-50"
-          :class="{'d-none': videoTileInfo.find(tile => tile.tileNum == 4 && tile.attendeeId != '')}"
+          class="justify-content-center align-items-center p-2"
+          :class="[
+            videoTileInfo.find(tile => tile.tileNum == 4 && tile.attendeeId != '') ? 'd-flex' : 'd-none',
+            `attendee-num-${attendeeNum}`
+          ]"
         >
           <video
             id="video-preview-4"
@@ -170,6 +182,11 @@
       const callback = async (presentAttendeeId, present) => {
         let targetTile = this.videoTileInfo.find((tile) => tile.attendeeId == presentAttendeeId)
         if (present) {
+          //contentの場合return
+          if(presentAttendeeId.includes('#content')){
+            return
+          }
+          console.log("新しいspeaker")
           if(! targetTile){
             //空いているタイルの検索
             targetTile = this.videoTileInfo.find((tile) => tile.attendeeId == '')
@@ -217,6 +234,11 @@
       this.meetingSession.audioVideo.start()
     },
 
+    computed: {
+      attendeeNum(){
+        return this.videoTileInfo.filter(tile => tile.attendeeId != '').length
+      }
+    },
     methods: {
       async switchVideoStatus(){
         await this.meetingSession.audioVideo.chooseVideoInputDevice(
@@ -264,5 +286,23 @@
   .footer-menu {
     background: $dark;
     height: 40px;
+  }
+  .attendee-num {
+    &-1 {
+      width: 100%;
+      height: 100%;
+    }
+    &-2 {
+      width: 50%;
+      height: 100%;
+    }
+    &-3 {
+      width: 50%;
+      height: 50%;
+    }
+    &-4 {
+      width: 50%;
+      height: 50%;
+    }
   }
 </style>
