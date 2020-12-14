@@ -20,8 +20,22 @@ body {
 
 .form-control {
   background-color: $dark;
+  color: $white;
   &:focus {
+    color: $white;
     border: 1px solid $secondary;
     background-color: $dark;
+  }
+}
+
+.btn {
+  white-space: nowrap;
+  font-weight: bold;
+  &-sm {
+    height: 25px;
+    font-size: 12px;
+    line-height: 19px;
+    padding-top: 3px;
+    padding-bottom: 3px;
   }
 }

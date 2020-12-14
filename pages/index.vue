@@ -26,15 +26,25 @@
             <span class="date">{{date}}</span>
           </div>
         </div>
-        <div class="meeting-list">
+        <div class="meeting-list py-3">
           <div
             v-for="meeting in meetings"
             :key="meeting.id"
+            class="d-flex justify-content-between align-items-start mb-3"
           >
-            <h2>{{meeting.topic}}</h2>
-            <span>{{$moment(meeting.start_time).format('HH:mm')}} ~ {{$moment(meeting.end_time).format('HH:mm')}}</span>
-            <span>ミーティングID: {{meeting.id}}</span>
-            <button class="btn btn-sm btn-secondary" @click="start(meeting.id)">開始</button>
+            <div>
+              <h5 class="font-weight-bold text-white">{{meeting.topic}}</h5>
+              <small>{{$moment(meeting.start_time).format('HH:mm')}} ~ {{$moment(meeting.end_time).format('HH:mm')}}</small>
+              <br>
+              <small>ミーティングID: {{meeting.id}}</small>
+            </div>
+            <button
+              class="btn btn-sm btn-outline-light"
+              @click="start(meeting.id)"
+              :disabled="status.isStarting"
+            >
+              開始
+            </button>
           </div>
         </div>
       </div>
@@ -66,7 +76,8 @@ export default {
     return {
       status: {
         isCreateMeetingModalOpen: false,
-        isEnterMeetingModalOpen: false
+        isEnterMeetingModalOpen: false,
+        isStarting: false
       }
     }
   },
@@ -93,6 +104,7 @@ export default {
       this.status.isEnterMeetingModalOpen = false
     },
     async start(meetingId){
+      this.status.isStarting = true
       await this.$store.dispatch('meetings/room/create', meetingId)
       await this.$store.dispatch('meetings/detail/attend', meetingId)
       this.$router.push(`/meetings/${meetingId}/view`)

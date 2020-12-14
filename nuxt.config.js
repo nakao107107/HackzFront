@@ -71,6 +71,10 @@ export default {
     ],
   },
 
+  router: {
+    middleware: 'auth',
+  },
+
   env: {
     API_URL
   }

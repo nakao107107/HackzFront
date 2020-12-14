@@ -13,15 +13,39 @@
         :class="status.isSharingOn ? 'w-25' : 'row w-100'"
       >
         <div
-          v-for="attendee in attendees"
-          :id="`video-container-${attendee}`"
-          :key="attendee"
-          class="justify-content-center align-items-center p-2"
-          :class="status.isSharingOn ? 'w-100 h-25' : `attendee-num-${attendees.length}`"
+          id="`video-container-1"
+          class="justify-content-center align-items-center p-2 d-flex w-50 h-50"
         >
           <video
-            :id="`video-preview-${attendee}`"
-            class="w-100 h-100"
+            id="video-preview-1"
+            class="w-100"
+          />
+        </div>
+        <div
+          id="`video-container-2"
+          class="justify-content-center align-items-center p-2 d-flex w-50 h-50"
+        >
+          <video
+            id="video-preview-2"
+            class="w-100"
+          />
+        </div>
+        <div
+          id="`video-container-3"
+          class="justify-content-center align-items-center p-2 d-flex w-50 h-50"
+        >
+          <video
+            id="video-preview-3"
+            class="w-100"
+          />
+        </div>
+        <div
+          id="`video-container-4"
+          class="justify-content-center align-items-center p-2 d-flex w-50 h-50"
+        >
+          <video
+            id="video-preview-4"
+            class="w-100"
           />
         </div>
       </div>
@@ -60,8 +84,14 @@
           isMicOn: true,
           isVideoOn: true,
           isSharingOn: false,
+          isPaused: false,
         },
-        attendees: []
+        videoTileInfo: [
+          {tileNum: 1, tileId: '', attendeeId: '', isVideoOn: false},
+          {tileNum: 2, tileId: '', attendeeId: '', isVideoOn: false},
+          {tileNum: 3, tileId: '', attendeeId: '', isVideoOn: false},
+          {tileNum: 4, tileId: '', attendeeId: '', isVideoOn: false}
+        ]
       }
     },
     async mounted() {
@@ -72,7 +102,7 @@
 
       //attendee専用のobserver
       const attendeeObserver = {
-        videoTileDidUpdate: (tileState) => {
+        videoTileDidUpdate: async (tileState) => {
           if (!tileState.boundExternalUserId) {
             return
           }
@@ -80,10 +110,23 @@
             return
           }
 
+          let targetTile = this.videoTileInfo.find((tile) => tile.attendeeId == tileState.boundAttendeeId)
+          if(! targetTile){
+            //空いているタイルの検索
+            targetTile = this.videoTileInfo.find((tile) => tile.attendeeId == '')
+            if(! targetTile){
+              console.log('このミーティングは満席です')
+              return
+            }
+          }
+
+
+          //空いているタイルにattendeeをbind
+          targetTile.attendeeId = tileState.boundAttendeeId
+          targetTile.tileId = tileState.tileId
           let videoElement = null
-          const tileId = tileState.tileId
-          videoElement = document.getElementById(`video-preview-${tileState.boundAttendeeId}`)
-          this.meetingSession.audioVideo.bindVideoElement(tileId, videoElement)
+          videoElement = document.getElementById(`video-preview-${targetTile.tileNum}`)
+          this.meetingSession.audioVideo.bindVideoElement(targetTile.tileId, videoElement)
         },
       }
 
@@ -124,12 +167,19 @@
       //入退出処理
       const callback = async (presentAttendeeId, present) => {
         if (present) {
-          this.attendees.push(presentAttendeeId)
+          let targetTile = this.videoTileInfo.find((tile) => tile.attendeeId == presentAttendeeId)
+          if(! targetTile){
+            //空いているタイルの検索
+            targetTile = this.videoTileInfo.find((tile) => tile.attendeeId == '')
+            if(! targetTile){
+              console.log('このミーティングは満席です')
+              return
+            }
+          }
+          //空いているタイルにattendeeをbind
+          targetTile.attendeeId = presentAttendeeId
+          targetTile.tileId = 0
         } else {
-          //退出処理
-          this.attendees = this.attendees.filter(
-            (attendee) => attendee != presentAttendeeId
-          )
         }
       }
       this.meetingSession.audioVideo.realtimeSubscribeToAttendeeIdPresence(
@@ -143,8 +193,14 @@
       )
       this.micDevices = await this.meetingSession.audioVideo.listAudioInputDevices()
       this.selectedMicDevice = this.micDevices[0].deviceId
+      await this.meetingSession.audioVideo.chooseAudioInputDevice(
+        this.selectedMicDevice
+      )
       this.audioDevices = await this.meetingSession.audioVideo.listAudioOutputDevices()
       this.selectedAudioDevice = this.audioDevices[0].deviceId
+      await this.meetingSession.audioVideo.chooseAudioOutputDevice(
+        this.selectedAudioDevice
+      )
 
       const audioElement = document.getElementById('audio')
       this.meetingSession.audioVideo.bindAudioElement(audioElement)
@@ -190,7 +246,7 @@
           //画面シェアがオフの時
           this.meetingSession.audioVideo.startContentShareFromScreenCapture()
         }
-      },
+      }
     }
   }
 </script>
@@ -200,24 +256,7 @@
     height: calc(100% - 40px);
   }
   .footer-menu {
+    background: $dark;
     height: 40px;
-  }
-  .attendee-num {
-    &-1 {
-      width: 100%;
-      height: 100%;
-    }
-    &-2 {
-      width: 50%;
-      height: 100%;
-    }
-    &-3 {
-      width: 50%;
-      height: 50%;
-    }
-    &-4 {
-      width: 50%;
-      height: 50%;
-    }
   }
 </style>
