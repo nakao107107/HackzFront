@@ -10,7 +10,7 @@
       </div>
       <div
         class="h-100"
-        :class="status.isSharingOn ? 'w-25' : 'row w-100'"
+        :class="status.isSharingOn ? 'w-25 d-flex flex-column justify-content-center' : 'row m-0 p-0 w-100'"
       >
         <div
           id="`video-container-1"
@@ -30,7 +30,7 @@
           class="justify-content-center align-items-center p-2"
           :class="[
             videoTileInfo.find(tile => tile.tileNum == 2 && tile.attendeeId != '') ? 'd-flex' : 'd-none',
-            `attendee-num-${attendeeNum}`
+            status.isSharingOn ? 'w-100 h-25' : `attendee-num-${attendeeNum}`
           ]"
         >
           <video
@@ -43,7 +43,7 @@
           class="justify-content-center align-items-center p-2"
           :class="[
             videoTileInfo.find(tile => tile.tileNum == 3 && tile.attendeeId != '') ? 'd-flex' : 'd-none',
-            `attendee-num-${attendeeNum}`
+            status.isSharingOn ? 'w-100 h-25' : `attendee-num-${attendeeNum}`
           ]"
         >
           <video
@@ -56,7 +56,7 @@
           class="justify-content-center align-items-center p-2"
           :class="[
             videoTileInfo.find(tile => tile.tileNum == 4 && tile.attendeeId != '') ? 'd-flex' : 'd-none',
-            `attendee-num-${attendeeNum}`
+            status.isSharingOn ? 'w-100 h-25' : `attendee-num-${attendeeNum}`
           ]"
         >
           <video
