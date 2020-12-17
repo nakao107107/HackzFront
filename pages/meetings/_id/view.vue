@@ -110,6 +110,7 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   export default {
     data(){
       return {
@@ -127,10 +128,10 @@
           isLoading: false
         },
         videoTileInfo: [
-          {tileNum: 1, tileId: '', attendeeId: '', isVideoOn: false},
-          {tileNum: 2, tileId: '', attendeeId: '', isVideoOn: false},
-          {tileNum: 3, tileId: '', attendeeId: '', isVideoOn: false},
-          {tileNum: 4, tileId: '', attendeeId: '', isVideoOn: false}
+          {tileNum: 1, tileId: '', attendeeId: '', userId: '', isVideoOn: false},
+          {tileNum: 2, tileId: '', attendeeId: '', userId: '', isVideoOn: false},
+          {tileNum: 3, tileId: '', attendeeId: '', userId: '', isVideoOn: false},
+          {tileNum: 4, tileId: '', attendeeId: '', userId: '', isVideoOn: false}
         ]
       }
     },
@@ -162,6 +163,7 @@
           //空いているタイルにattendeeをbind
           targetTile.attendeeId = tileState.boundAttendeeId
           targetTile.tileId = tileState.tileId
+          targetTile.userId = this.profile.id
           let videoElement = null
           videoElement = document.getElementById(`video-preview-${targetTile.tileNum}`)
           this.meetingSession.audioVideo.bindVideoElement(targetTile.tileId, videoElement)
@@ -222,10 +224,12 @@
           //空いているタイルにattendeeをbind
           targetTile.attendeeId = presentAttendeeId
           targetTile.tileId = 0
+          targetTile.userId = this.profile.id
         } else {
           if(targetTile){
             targetTile.tileId = 0
             targetTile.attendeeId = ''
+            targetTile.userId = ''
           }
         }
       }
@@ -261,7 +265,8 @@
     computed: {
       attendeeNum(){
         return this.videoTileInfo.filter(tile => tile.attendeeId != '').length
-      }
+      },
+      ...mapGetters('profile', ['profile'])
     },
     methods: {
       async switchVideoStatus(){
