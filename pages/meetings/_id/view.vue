@@ -1,5 +1,6 @@
 <template>
   <div class="bg-dark vh-100 vw-100">
+    <canvas id="canvas" class="d-none" width="960px" height="540px"/>
     <audio id="audio"/>
     <div class="video-container d-flex">
       <div
@@ -23,7 +24,24 @@
           <video
             id="video-preview-1"
             class="w-100"
+            :class="status.isLoading ? 'd-none' : 'd-block'"
           />
+          <div
+            :class="status.isLoading ? 'd-block' : 'd-none'"
+            class="position-relative"
+          >
+            <img
+              id="video-preview-1-loading"
+              class="w-100"
+              style="object-fit: contain"
+            >
+            <div class="position-absolute top-0 left-0 w-100 h-100 bg-dark d-flex justify-content-center align-items-center" style="opacity: .7">
+              <div class="text-white text-center">
+                <h5>接続中....</h5>
+                <h1 class="fas fa-spinner fa-spin"></h1>
+              </div>
+            </div>
+          </div>
         </div>
         <div
           id="`video-container-2"
@@ -37,6 +55,7 @@
             id="video-preview-2"
             class="w-100"
           />
+          <img id="video-preview-2-loading" class="w-100" style="object-fit: contain">
         </div>
         <div
           id="`video-container-3"
@@ -50,6 +69,7 @@
             id="video-preview-3"
             class="w-100"
           />
+          <img id="video-preview-3-loading" class="w-100" style="object-fit: contain">
         </div>
         <div
           id="`video-container-4"
@@ -63,6 +83,7 @@
             id="video-preview-4"
             class="w-100"
           />
+          <img id="video-preview-4-loading" class="w-100" style="object-fit: contain">
         </div>
       </div>
     </div>
@@ -75,6 +96,9 @@
         <button class="btn" @click="switchVideoStatus">
           <i class="fas fa-video text-white" v-if="status.isVideoOn"></i>
           <i class="fas fa-video-slash text-white" v-else></i>
+        </button>
+        <button class="btn" @click="loadingMode">
+          loading
         </button>
       </div>
       <button class="btn" @click="switchSharingStatus">
@@ -100,7 +124,7 @@
           isMicOn: true,
           isVideoOn: true,
           isSharingOn: false,
-          isPaused: false,
+          isLoading: false
         },
         videoTileInfo: [
           {tileNum: 1, tileId: '', attendeeId: '', isVideoOn: false},
@@ -274,6 +298,14 @@
           //画面シェアがオフの時
           this.meetingSession.audioVideo.startContentShareFromScreenCapture()
         }
+      },
+      loadingMode(){
+        this.status.isLoading = !this.status.isLoading
+        const canvas = document.getElementById( "canvas" )
+        const imgdata = this.meetingSession.audioVideo.captureVideoTile(1)
+        canvas.getContext('2d').putImageData(imgdata, 0, 0)
+        const image = document.getElementById('video-preview-1-loading')
+        image.src = canvas.toDataURL()
       }
     }
   }
@@ -305,4 +337,14 @@
       height: 50%;
     }
   }
+
+  .top-0 {
+    top: 0;
+  }
+
+  .left-0 {
+    left: 0;
+  }
+
+
 </style>
