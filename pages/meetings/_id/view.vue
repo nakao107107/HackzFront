@@ -97,8 +97,8 @@
           <i class="fas fa-video text-white" v-if="status.isVideoOn"></i>
           <i class="fas fa-video-slash text-white" v-else></i>
         </button>
-        <button class="btn" @click="loadingMode">
-          loading
+        <button class="btn" @click="switchLoadingStatus">
+          <i class="fas fa-spinner text-white" :class="{'fa-spin': status.isLoading}"></i>
         </button>
       </div>
       <button class="btn" @click="switchSharingStatus">
@@ -144,7 +144,7 @@
         .startAt(this.$route.params.id)
         .endAt(this.$route.params.id)
       // データベースにレコードが追加されたときに発火させるメソッドを定義
-      // refMessage.limitToLast(10).on('child_added', this.childAdded)
+      refLoadingStatus.on('child_added', this.fetchLoadingStatus)
     },
     async mounted() {
       this.meetingSession = await this.$store.dispatch(
@@ -315,13 +315,29 @@
           this.meetingSession.audioVideo.startContentShareFromScreenCapture()
         }
       },
-      loadingMode(){
+      switchLoadingStatus(){
         this.status.isLoading = !this.status.isLoading
+        //他の参加者に対してLoading statusを送信
+        firebase
+          .database()
+          .ref('loading')
+          .push(
+            {
+              session_id: this.$route.params.id,
+              mode: this.status.isLoading,
+              user_id: this.profile.id,
+            },
+            () => {}
+          )
         const canvas = document.getElementById( "canvas" )
         const imgdata = this.meetingSession.audioVideo.captureVideoTile(1)
         canvas.getContext('2d').putImageData(imgdata, 0, 0)
         const image = document.getElementById('video-preview-1-loading')
         image.src = canvas.toDataURL()
+      },
+      fetchLoadingStatus(snap){
+        const message = snap.val()
+        console.log(message)
       }
     }
   }
