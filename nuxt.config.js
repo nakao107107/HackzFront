@@ -1,7 +1,11 @@
 require('dotenv').config()
 const webpack = require('webpack')
 const {
-  API_URL
+  API_URL,
+  FIREBASE_APIKEY,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_MESSAGE_SENDER_ID,
+  FIREBASE_APP_ID
 } = process.env
 export default {
 
@@ -29,7 +33,8 @@ export default {
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
-    '~/plugins/http.js'
+    '~/plugins/http.js',
+    '~/plugins/firebase.js',
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -76,6 +81,10 @@ export default {
   },
 
   env: {
-    API_URL
+    API_URL,
+    FIREBASE_APIKEY,
+    FIREBASE_PROJECT_ID,
+    FIREBASE_MESSAGE_SENDER_ID,
+    FIREBASE_APP_ID
   }
 }

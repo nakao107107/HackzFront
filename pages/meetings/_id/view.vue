@@ -110,6 +110,7 @@
 </template>
 
 <script>
+  import firebase from 'firebase'
   import { mapGetters } from 'vuex'
   export default {
     data(){
@@ -134,6 +135,16 @@
           {tileNum: 4, tileId: '', attendeeId: '', userId: '', isVideoOn: false}
         ]
       }
+    },
+    created() {
+      const refLoadingStatus = firebase
+        .database()
+        .ref('loading')
+        .orderByChild('session_id')
+        .startAt(this.$route.params.id)
+        .endAt(this.$route.params.id)
+      // データベースにレコードが追加されたときに発火させるメソッドを定義
+      // refMessage.limitToLast(10).on('child_added', this.childAdded)
     },
     async mounted() {
       this.meetingSession = await this.$store.dispatch(
