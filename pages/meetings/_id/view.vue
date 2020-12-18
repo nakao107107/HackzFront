@@ -148,6 +148,10 @@
         <button class="btn" @click="switchLoadingStatus">
           <i class="fas fa-spinner text-white" :class="{'fa-spin': status.isLoading}"></i>
         </button>
+        <button class="btn" @click="switchRecordingStatus">
+          <i class="fas fa-pause text-white"v-if="status.isRecording"></i>
+          <i class="fas fa-play text-white" v-else></i>
+        </button>
       </div>
       <button class="btn" @click="switchSharingStatus">
         <i class="fas fa-desktop text-success"></i>
@@ -174,14 +178,17 @@
           isMicOn: true,
           isVideoOn: true,
           isSharingOn: false,
-          isLoading: false
+          isLoading: false,
+          isRecording: false
         },
         videoTileInfo: [
           {tileNum: 1, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false},
           {tileNum: 2, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false},
           {tileNum: 3, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false},
           {tileNum: 4, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false}
-        ]
+        ],
+        recorder: null,
+        chucks: []
       }
     },
     async mounted() {
@@ -391,6 +398,30 @@
         canvas.getContext('2d').drawImage(videoPreview, 0, 0)
         const image = document.getElementById(`video-preview-${targetTile.tileNum}-loading`)
         image.src = canvas.toDataURL()
+      },
+      switchRecordingStatus(){
+        console.log('switchRecordingStatus')
+        if(this.status.isRecording){
+          this.stopRecording()
+        }else{
+          this.startRecording()
+        }
+        this.status.isRecording = !this.status.isRecording
+      },
+      async startRecording(){
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+        this.recorder = new MediaRecorder(stream, { mimeType: "video/webm;codecs=vp9" });
+        this.recorder.ondataavailable = (e) => {
+          console.log(e)
+          this.chunks.push(e.data)
+        }
+        this.recorder.start
+
+      },
+      stopRecording(){
+        this.recorder.stop
+        console.log("stop recording")
+        console.log(this.chucks)
       }
     }
   }
