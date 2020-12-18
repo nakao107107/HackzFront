@@ -14,7 +14,7 @@
         :class="status.isSharingOn ? 'w-25 d-flex flex-column justify-content-center' : 'row m-0 p-0 w-100'"
       >
         <div
-          id="`video-container-1"
+          id="video-container-1"
           class="justify-content-center align-items-center p-2"
           :class="[
             videoTileInfo.find(tile => tile.tileNum == 1 && tile.attendeeId != '') ? 'd-flex' : 'd-none',
@@ -24,10 +24,10 @@
           <video
             id="video-preview-1"
             class="w-100"
-            :class="status.isLoading ? 'd-none' : 'd-block'"
+            :class="videoTileInfo.find(tile => tile.tileNum == 1).isLoading ? 'd-none' : 'd-block'"
           />
           <div
-            :class="status.isLoading ? 'd-block' : 'd-none'"
+            :class="videoTileInfo.find(tile => tile.tileNum == 1).isLoading ? 'd-block' : 'd-none'"
             class="position-relative"
           >
             <img
@@ -44,7 +44,7 @@
           </div>
         </div>
         <div
-          id="`video-container-2"
+          id="video-container-2"
           class="justify-content-center align-items-center p-2"
           :class="[
             videoTileInfo.find(tile => tile.tileNum == 2 && tile.attendeeId != '') ? 'd-flex' : 'd-none',
@@ -54,11 +54,27 @@
           <video
             id="video-preview-2"
             class="w-100"
+            :class="videoTileInfo.find(tile => tile.tileNum == 2).isLoading ? 'd-none' : 'd-block'"
           />
-          <img id="video-preview-2-loading" class="w-100" style="object-fit: contain">
+          <div
+            :class="videoTileInfo.find(tile => tile.tileNum == 2).isLoading ? 'd-block' : 'd-none'"
+            class="position-relative"
+          >
+            <img
+              id="video-preview-2-loading"
+              class="w-100"
+              style="object-fit: contain"
+            >
+            <div class="position-absolute top-0 left-0 w-100 h-100 bg-dark d-flex justify-content-center align-items-center" style="opacity: .7">
+              <div class="text-white text-center">
+                <h5>接続中....</h5>
+                <h1 class="fas fa-spinner fa-spin"></h1>
+              </div>
+            </div>
+          </div>
         </div>
         <div
-          id="`video-container-3"
+          id="video-container-3"
           class="justify-content-center align-items-center p-2"
           :class="[
             videoTileInfo.find(tile => tile.tileNum == 3 && tile.attendeeId != '') ? 'd-flex' : 'd-none',
@@ -68,8 +84,24 @@
           <video
             id="video-preview-3"
             class="w-100"
+            :class="videoTileInfo.find(tile => tile.tileNum == 3).isLoading ? 'd-none' : 'd-block'"
           />
-          <img id="video-preview-3-loading" class="w-100" style="object-fit: contain">
+          <div
+            :class="videoTileInfo.find(tile => tile.tileNum == 3).isLoading ? 'd-block' : 'd-none'"
+            class="position-relative"
+          >
+            <img
+              id="video-preview-3-loading"
+              class="w-100"
+              style="object-fit: contain"
+            >
+            <div class="position-absolute top-0 left-0 w-100 h-100 bg-dark d-flex justify-content-center align-items-center" style="opacity: .7">
+              <div class="text-white text-center">
+                <h5>接続中....</h5>
+                <h1 class="fas fa-spinner fa-spin"></h1>
+              </div>
+            </div>
+          </div>
         </div>
         <div
           id="`video-container-4"
@@ -82,8 +114,24 @@
           <video
             id="video-preview-4"
             class="w-100"
+            :class="videoTileInfo.find(tile => tile.tileNum == 4).isLoading ? 'd-none' : 'd-block'"
           />
-          <img id="video-preview-4-loading" class="w-100" style="object-fit: contain">
+          <div
+            :class="videoTileInfo.find(tile => tile.tileNum == 4).isLoading ? 'd-block' : 'd-none'"
+            class="position-relative"
+          >
+            <img
+              id="video-preview-4-loading"
+              class="w-100"
+              style="object-fit: contain"
+            >
+            <div class="position-absolute top-0 left-0 w-100 h-100 bg-dark d-flex justify-content-center align-items-center" style="opacity: .7">
+              <div class="text-white text-center">
+                <h5>接続中....</h5>
+                <h1 class="fas fa-spinner fa-spin"></h1>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -129,14 +177,15 @@
           isLoading: false
         },
         videoTileInfo: [
-          {tileNum: 1, tileId: '', attendeeId: '', userId: '', isVideoOn: false},
-          {tileNum: 2, tileId: '', attendeeId: '', userId: '', isVideoOn: false},
-          {tileNum: 3, tileId: '', attendeeId: '', userId: '', isVideoOn: false},
-          {tileNum: 4, tileId: '', attendeeId: '', userId: '', isVideoOn: false}
+          {tileNum: 1, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false},
+          {tileNum: 2, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false},
+          {tileNum: 3, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false},
+          {tileNum: 4, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false}
         ]
       }
     },
-    created() {
+    async mounted() {
+      //firebase系
       const refLoadingStatus = firebase
         .database()
         .ref('loading')
@@ -144,9 +193,8 @@
         .startAt(this.$route.params.id)
         .endAt(this.$route.params.id)
       // データベースにレコードが追加されたときに発火させるメソッドを定義
-      refLoadingStatus.on('child_added', this.fetchLoadingStatus)
-    },
-    async mounted() {
+      refLoadingStatus.limitToLast(100).on('child_added', this.fetchLoadingStatus)
+
       this.meetingSession = await this.$store.dispatch(
         'meetings/room/fetch',
         this.$route.params.id
@@ -174,7 +222,7 @@
           //空いているタイルにattendeeをbind
           targetTile.attendeeId = tileState.boundAttendeeId
           targetTile.tileId = tileState.tileId
-          targetTile.userId = this.profile.id
+          targetTile.userId = tileState.boundExternalUserId
           let videoElement = null
           videoElement = document.getElementById(`video-preview-${targetTile.tileNum}`)
           this.meetingSession.audioVideo.bindVideoElement(targetTile.tileId, videoElement)
@@ -223,7 +271,6 @@
           if(presentAttendeeId.includes('#content')){
             return
           }
-          console.log("新しいspeaker")
           if(! targetTile){
             //空いているタイルの検索
             targetTile = this.videoTileInfo.find((tile) => tile.attendeeId == '')
@@ -329,15 +376,21 @@
             },
             () => {}
           )
-        const canvas = document.getElementById( "canvas" )
-        const imgdata = this.meetingSession.audioVideo.captureVideoTile(1)
-        canvas.getContext('2d').putImageData(imgdata, 0, 0)
-        const image = document.getElementById('video-preview-1-loading')
-        image.src = canvas.toDataURL()
       },
       fetchLoadingStatus(snap){
-        const message = snap.val()
-        console.log(message)
+        const status = snap.val()
+        const canvas = document.getElementById( "canvas" )
+        const targetTile = this.videoTileInfo.find((tile)=> tile.userId == status.user_id)
+        if(!targetTile){
+          return
+        }
+        targetTile.isLoading = status.mode
+        const videoPreview = document.getElementById(`video-preview-${targetTile.tileNum}`)
+        canvas.width = videoPreview.videoWidth
+        canvas.height = videoPreview.videoHeight
+        canvas.getContext('2d').drawImage(videoPreview, 0, 0)
+        const image = document.getElementById(`video-preview-${targetTile.tileNum}-loading`)
+        image.src = canvas.toDataURL()
       }
     }
   }
