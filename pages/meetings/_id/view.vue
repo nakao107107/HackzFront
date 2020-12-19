@@ -1,5 +1,11 @@
 <template>
   <div class="bg-dark vh-100 vw-100">
+    <ConfirmVideoModal
+      :blob="blob"
+      :blob-url="blobUrl"
+      :is-modal-open="status.isModalOpen"
+      @close-modal="status.isModalOpen = false"
+    />
     <canvas id="canvas" class="d-none" width="960px" height="540px"/>
     <audio id="audio"/>
     <div class="video-container d-flex">
@@ -24,7 +30,9 @@
           <video
             id="video-preview-1"
             class="w-100"
-            :class="videoTileInfo.find(tile => tile.tileNum == 1).isLoading ? 'd-none' : 'd-block'"
+            :class="[
+              videoTileInfo.find(tile => tile.tileNum == 1).isLoading || videoTileInfo.find(tile => tile.tileNum == 1).isRepeating ? 'd-none' : 'd-block',
+            ]"
           />
           <div
             :class="videoTileInfo.find(tile => tile.tileNum == 1).isLoading ? 'd-block' : 'd-none'"
@@ -41,6 +49,11 @@
                 <h1 class="fas fa-spinner fa-spin"></h1>
               </div>
             </div>
+          </div>
+          <div
+            :class="videoTileInfo.find(tile => tile.tileNum == 1).isRepeating ? 'd-block' : 'd-none'"
+          >
+            <video id="video-1-repeating" class="w-100" loop autoplay muted></video>
           </div>
         </div>
         <div
@@ -164,7 +177,9 @@
 <script>
   import firebase from 'firebase'
   import { mapGetters } from 'vuex'
+  import ConfirmVideoModal from "../../../components/meetings/ConfirmVideoModal";
   export default {
+    components: {ConfirmVideoModal},
     data(){
       return {
         meetingSession: null,
@@ -179,16 +194,18 @@
           isVideoOn: true,
           isSharingOn: false,
           isLoading: false,
-          isRecording: false
+          isRecording: false,
+          isModalOpen: false
         },
         videoTileInfo: [
-          {tileNum: 1, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false},
-          {tileNum: 2, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false},
-          {tileNum: 3, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false},
-          {tileNum: 4, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false}
+          {tileNum: 1, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false, isRepeating: false},
+          {tileNum: 2, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false, isRepeating: false},
+          {tileNum: 3, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false, isRepeating: false},
+          {tileNum: 4, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false, isRepeating: false}
         ],
         recorder: null,
-        chucks: []
+        blob: null,
+        blobUrl: ''
       }
     },
     async mounted() {
@@ -199,8 +216,15 @@
         .orderByChild('session_id')
         .startAt(this.$route.params.id)
         .endAt(this.$route.params.id)
+      const refRepeatStatus = firebase
+        .database()
+        .ref('repeat')
+        .orderByChild('session_id')
+        .startAt(this.$route.params.id)
+        .endAt(this.$route.params.id)
       // データベースにレコードが追加されたときに発火させるメソッドを定義
       refLoadingStatus.limitToLast(100).on('child_added', this.fetchLoadingStatus)
+      refRepeatStatus.limitToLast(100).on('child_added', this.fetchRepeatStatus)
 
       this.meetingSession = await this.$store.dispatch(
         'meetings/room/fetch',
@@ -331,6 +355,15 @@
       attendeeNum(){
         return this.videoTileInfo.filter(tile => tile.attendeeId != '').length
       },
+      mediaRecorder: {
+        get: function(){
+          return this.recorder
+        },
+        set: function(recorder) {
+          console.log(recorder)
+          this.recorder = recorder
+        }
+      },
       ...mapGetters('profile', ['profile'])
     },
     methods: {
@@ -399,6 +432,17 @@
         const image = document.getElementById(`video-preview-${targetTile.tileNum}-loading`)
         image.src = canvas.toDataURL()
       },
+      fetchRepeatStatus(snap){
+        const status = snap.val()
+        const targetTile = this.videoTileInfo.find((tile)=> tile.userId == status.user_id)
+        if(!targetTile){
+          return
+        }
+        targetTile.isRepeating = status.mode
+        const videoRepeating = document.getElementById(`video-${targetTile.tileNum}-repeating`)
+        videoRepeating.src = status.url
+        console.log(targetTile)
+      },
       switchRecordingStatus(){
         console.log('switchRecordingStatus')
         if(this.status.isRecording){
@@ -410,18 +454,22 @@
       },
       async startRecording(){
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-        this.recorder = new MediaRecorder(stream, { mimeType: "video/webm;codecs=vp9" });
-        this.recorder.ondataavailable = (e) => {
-          console.log(e)
-          this.chunks.push(e.data)
+        this.mediaRecorder = new MediaRecorder(stream, { mimeType: "video/webm;codecs=vp9" })
+        this.mediaRecorder.ondataavailable = (e) => {
+          const blob = new Blob([e.data], {type:e.data.type})
+          this.saveMovie(blob)
         }
-        this.recorder.start
+        this.mediaRecorder.start()
 
       },
       stopRecording(){
-        this.recorder.stop
-        console.log("stop recording")
-        console.log(this.chucks)
+        this.mediaRecorder.stop()
+      },
+      saveMovie(blob){
+        this.blob = blob
+        this.blob.name = 'test.webm'
+        this.blobUrl = window.URL.createObjectURL(this.blob)
+        this.status.isModalOpen = true
       }
     }
   }

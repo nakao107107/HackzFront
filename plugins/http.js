@@ -1,10 +1,12 @@
 import axios from 'axios'
 
 class Http {
-  constructor(axios, responseBuilder, ctx) {
+  constructor(axios, responseBuilder, ctx, url, headers) {
     this._axios = axios
     this._responseBuilder = responseBuilder
     this._ctx = ctx
+    this._url = url
+    this._headers = headers
   }
 
   get(url, params, options = {}) {
@@ -60,12 +62,23 @@ class Http {
   }
 
   async request(options) {
-    const token = await this._ctx.store.dispatch('auth/getToken')
-    const headers = {
-      Authorization: token,
+    //urlが指定されていた場合そちらを採用, なければAPIのBASE_URLを採用
+    if (this._url) {
+      options.baseURL = this._url
+    } else {
+      options.baseURL = process.env.API_URL
     }
-    options.baseURL = process.env.API_URL
-    options.headers = headers
+
+    //headerが指定されていた場合そちらを採用, なければAuthorizationを添付
+    if (_.isEmpty(this._headers)) {
+      const token = await this._ctx.store.dispatch('auth/getToken')
+      const headers = {
+        Authorization: token,
+      }
+      options.headers = headers
+    } else {
+      options.headers = this._headers
+    }
     const response = await this._axios(options).catch((err) => err.response)
     return this._responseBuilder(response)
   }
@@ -92,8 +105,8 @@ class Response {
 }
 
 export default (ctx, inject) => {
-  inject('http', () => {
+  inject('http', (url = null, headers = {}) => {
     const client = axios.create()
-    return new Http(client, (res) => new Response(res), ctx)
+    return new Http(client, (res) => new Response(res), ctx, url, headers)
   })
 }
