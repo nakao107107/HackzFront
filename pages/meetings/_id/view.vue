@@ -113,7 +113,27 @@
         <i class="fas fa-desktop text-success"></i>
         <span class="text-success">画面共有</span>
       </button>
-      <button class="btn btn-sm btn-danger">終了</button>
+      <el-popover
+        placement="top"
+        trigger="click"
+        width="250px"
+      >
+        <ul
+          class="list-group border-0 p-0 m-0"
+        >
+          <li
+            class="text-center border-bottom list-group-item list-group-item-action cursor-pointer"
+          >
+            セッションを完全に終了
+          </li>
+          <li
+            class="text-center border-0 list-group-item list-group-item-action cursor-pointer"
+          >
+            セッションから退出
+          </li>
+        </ul>
+        <button class="btn btn-sm btn-danger" slot="reference">終了</button>
+      </el-popover>
     </div>
   </div>
 </template>
@@ -190,8 +210,6 @@
           if(! tileState.localTile){
             return
           }
-
-          console.log(tileState)
 
           let targetTile = this.videoTileInfo.find((tile) => tile.attendeeId == tileState.boundAttendeeId)
           if(! targetTile){

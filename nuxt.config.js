@@ -28,13 +28,15 @@ export default {
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
   css: [
-    '~/assets/scss/app.scss'
+    '~/assets/scss/app.scss',
+    'element-ui/lib/theme-chalk/index.css'
   ],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
     '~/plugins/http.js',
     '~/plugins/firebase.js',
+    '~/plugins/element-ui.js',
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
