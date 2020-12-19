@@ -106,16 +106,28 @@
           <i class="fas fa-microphone-slash text-white" v-else></i>
           <span>マイク</span>
         </button>
-        <button class="btn footer-btn" @click="switchVideoStatus">
+        <button
+          class="btn footer-btn"
+          @click="switchVideoStatus"
+          :disabled="status.isLoading || status.isRecording || status.isRepeating"
+        >
           <i class="fas fa-video text-white" v-if="status.isVideoOn"></i>
           <i class="fas fa-video-slash text-white" v-else></i>
           <span>ビデオ</span>
         </button>
-        <button class="btn footer-btn" @click="switchLoadingStatus">
+        <button
+          class="btn footer-btn"
+          @click="switchLoadingStatus"
+          :disabled="!status.isVideoOn || status.isRecording || status.isRepeating"
+        >
           <i class="fas fa-spinner text-white" :class="{'fa-spin': status.isLoading}"></i>
           <span>通信不良</span>
         </button>
-        <button class="btn footer-btn" @click="switchRecordingStatus">
+        <button
+          class="btn footer-btn"
+          @click="switchRecordingStatus"
+          :disabled="!status.isVideoOn"
+        >
           <i class="fas fa-pause text-white"v-if="status.isRecording"></i>
           <i class="fas fa-play text-white" v-else></i>
           <span>リピート動画</span>
@@ -162,7 +174,8 @@
           isSharingOn: false,
           isLoading: false,
           isRecording: false,
-          isModalOpen: false
+          isRepeating: false,
+          isModalOpen: false,
         },
         videoTileInfo: [
           {tileNum: 1, tileId: '', attendeeId: '', userId: '', isVideoOn: false, isLoading: false, isRepeating: false},
