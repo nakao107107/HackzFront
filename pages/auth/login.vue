@@ -55,7 +55,6 @@
           await this.$store.dispatch('auth/login', this.input)
           this.$router.push('/')
         } catch (e) {
-          console.log(e)
           this.status.isError = true
           this.status.isSubmitting = false
         }

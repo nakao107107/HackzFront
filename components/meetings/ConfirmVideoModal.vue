@@ -8,8 +8,12 @@
     no-close-on-backdrop
   >
     <div class="p-4">
-      <video :src="blobUrl" width="100%" autoplay loop muted></video>
-      <button class="btn btn-secondary" @click="close">参加</button>
+      <span class="d-block mb-3">こちらの動画が繰り返されます</span>
+      <video :src="blobUrl" class="mb-3" width="100%" autoplay loop muted></video>
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-outline-light mr-2" @click="cancel">キャンセル</button>
+        <button class="btn btn-secondary mr-2" @click="save">保存</button>
+      </div>
     </div>
   </BModal>
 </template>
@@ -40,9 +44,12 @@
       ...mapGetters('profile', ['profile'])
     },
     methods: {
-      async close(){
+      async cancel(){
+        this.$emit('close-modal')
+        this.$emit('canceled')
+      },
+      async save(){
         let reader = new FileReader()
-        console.log(this.blob)
         await reader.readAsArrayBuffer(this.blob)
         reader.onload = async (e) => {
           const params = {
@@ -54,23 +61,9 @@
       },
       async uploadFile(params){
         const filePath = await this.$store.dispatch('file/upload', params)
-        //データ送信
-        this.sendMovie(filePath)
+        console.log(filePath)
+        this.$emit('file-saved', filePath)
         this.$emit('close-modal')
-      },
-      sendMovie(filePath){
-        firebase
-          .database()
-          .ref('repeat')
-          .push(
-            {
-              session_id: this.$route.params.id,
-              mode: true,
-              user_id: this.profile.id,
-              url: `https://hackz.s3-ap-northeast-1.amazonaws.com/${filePath}`
-            },
-            () => {}
-          )
       }
     }
   }

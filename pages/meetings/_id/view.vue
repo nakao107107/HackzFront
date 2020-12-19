@@ -4,7 +4,9 @@
       :blob="blob"
       :blob-url="blobUrl"
       :is-modal-open="status.isModalOpen"
+      @file-saved="saveFile"
       @close-modal="status.isModalOpen = false"
+      @canceled="resetBlob"
     />
     <canvas id="canvas" class="d-none" width="960px" height="540px"/>
     <audio id="audio"/>
@@ -167,6 +169,10 @@
         <button class="footer-btn" @click="switchRecordingStatus">
           <i class="fas fa-pause text-white"v-if="status.isRecording"></i>
           <i class="fas fa-play text-white" v-else></i>
+          <span>リピート動画</span>
+        </button>
+        <button class="footer-btn" @click="switchRepeatingStatus" v-if="filePath">
+          <i class="fas fa-redo-alt text-white" :class="{'fa-spin': status.isRepeating}"></i>
           <span>リピート</span>
         </button>
       </div>
@@ -185,6 +191,9 @@
   import ConfirmVideoModal from "../../../components/meetings/ConfirmVideoModal";
   export default {
     components: {ConfirmVideoModal},
+    async fetch({store, route}){
+      await store.dispatch('attendees/list/fetch', route.params.id)
+    },
     data(){
       return {
         meetingSession: null,
@@ -210,7 +219,8 @@
         ],
         recorder: null,
         blob: null,
-        blobUrl: ''
+        blobUrl: '',
+        filePath: ''
       }
     },
     async mounted() {
@@ -267,8 +277,11 @@
 
       const shareObserver = {
         videoTileDidUpdate: (tileState) => {
+          if (!tileState.boundAttendeeId) {
+            return
+          }
           //content share用のスクリーンでなければreturn
-          if (!tileState.boundAttendeeId || !tileState.isContent) {
+          if(!tileState.isContent){
             return
           }
           const videoElement = document.getElementById('share')
@@ -283,12 +296,10 @@
         },
         //自分の画面共有開始時
         contentShareDidStart: () => {
-          console.log("画面共有")
           this.status.isSharingOn = true
         },
         //自分の画面共有停止時
         contentShareDidStop: () => {
-          console.log("画面共有停止")
           this.status.isSharingOn = false
         },
         //他人の画面共有停止時
@@ -318,8 +329,9 @@
           //空いているタイルにattendeeをbind
           targetTile.attendeeId = presentAttendeeId
           targetTile.tileId = 0
-          targetTile.userId = this.profile.id
+          targetTile.userId = this.attendees.find(attendee => attendee.chime_attendee_id == presentAttendeeId).user_id
         } else {
+          //退出処理
           if(targetTile){
             targetTile.tileId = 0
             targetTile.attendeeId = ''
@@ -365,11 +377,11 @@
           return this.recorder
         },
         set: function(recorder) {
-          console.log(recorder)
           this.recorder = recorder
         }
       },
-      ...mapGetters('profile', ['profile'])
+      ...mapGetters('profile', ['profile']),
+      ...mapGetters('attendees/list', ['attendees'])
     },
     methods: {
       async switchVideoStatus(){
@@ -439,6 +451,7 @@
       },
       fetchRepeatStatus(snap){
         const status = snap.val()
+        console.log(status)
         const targetTile = this.videoTileInfo.find((tile)=> tile.userId == status.user_id)
         if(!targetTile){
           return
@@ -446,10 +459,8 @@
         targetTile.isRepeating = status.mode
         const videoRepeating = document.getElementById(`video-${targetTile.tileNum}-repeating`)
         videoRepeating.src = status.url
-        console.log(targetTile)
       },
       switchRecordingStatus(){
-        console.log('switchRecordingStatus')
         if(this.status.isRecording){
           this.stopRecording()
         }else{
@@ -470,10 +481,55 @@
       stopRecording(){
         this.mediaRecorder.stop()
       },
+      switchRepeatingStatus(){
+        if(this.status.isRepeating){
+          this.stopRepeating()
+        }else{
+          this.startRepeating()
+        }
+        this.status.isRepeating = !this.status.isRecording
+      },
+      startRepeating(){
+        firebase
+          .database()
+          .ref('repeat')
+          .push(
+            {
+              session_id: this.$route.params.id,
+              mode: true,
+              user_id: this.profile.id,
+              url: `https://hackz.s3-ap-northeast-1.amazonaws.com/${this.filePath}`
+            },
+            () => {}
+          )
+      },
+      stopRepeating(){
+        firebase
+          .database()
+          .ref('repeat')
+          .push(
+            {
+              session_id: this.$route.params.id,
+              mode: false,
+              user_id: this.profile.id,
+              url: ''
+            },
+            () => {}
+          )
+      },
       saveMovie(blob){
         this.blob = blob
         this.blobUrl = window.URL.createObjectURL(this.blob)
         this.status.isModalOpen = true
+      },
+      resetBlob(){
+        this.blob = null
+        this.blobUrl = ''
+        this.filePath = ''
+      },
+      saveFile(filePath){
+        console.log('savefile', filePath)
+        this.filePath = filePath
       }
     }
   }
@@ -495,7 +551,7 @@
       border:none;
       background: $dark;
       padding: 8px;
-      width: 70px;
+      width: 80px;
       display: flex;
       flex-direction: column;
       align-items: center;
