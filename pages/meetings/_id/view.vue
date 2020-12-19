@@ -2,7 +2,7 @@
   <div class="vh-100 vw-100" style="background-color: #111111">
     <div class="header">
       <el-popover width="400px">
-        <div>
+        <div class="p-3">
           <h5 class="font-weight-bold text-white">{{meeting.topic}}</h5>
           <div>
             <label class="d-inline-block mr-3">ミーティングID</label>
@@ -552,6 +552,7 @@
         this.filePath = filePath
       },
       exitMeeting(){
+        this.meetingSession.audioVideo.stop()
         this.$router.push('/')
       }
     }
