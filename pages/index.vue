@@ -36,7 +36,7 @@
             class="d-flex justify-content-between align-items-start mb-3"
           >
             <div>
-              <h5 class="font-weight-bold text-white">{{meeting.topic}}</h5>
+              <h6 class="font-weight-bold text-white">{{meeting.topic}}</h6>
               <small>ミーティングID: {{meeting.id}}</small>
             </div>
             <button
