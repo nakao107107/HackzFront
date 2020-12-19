@@ -6,8 +6,8 @@
     </div>
     <div class="login-form" v-else>
       <div class="d-flex justify-content-between">
-        <h5 class="font-weight-bold text-white">サイン イン</h5>
-        <nuxt-link to="/auth/signup" class="text-secondary font-weight-bold">無料でサインアップ</nuxt-link>
+        <h5 class="font-weight-bold text-white">サイン アップ</h5>
+        <nuxt-link to="/auth/login" class="text-secondary font-weight-bold">すでにアカウントをお持ちですか？</nuxt-link>
       </div>
       <div class="form-group">
         <label>email</label>
@@ -31,7 +31,7 @@
       </div>
       <span class="text-danger mb-2" v-if="status.isError">電子メールまたはパスワードが正しくありません</span>
       <div class="form-group text-right">
-        <button class="btn btn-secondary font-weight-bold" @click="login">サイン イン</button>
+        <button class="btn btn-secondary font-weight-bold" @click="login">サイン アップ</button>
       </div>
     </div>
   </div>
@@ -56,7 +56,7 @@
       async login() {
         this.status.isSubmitting = true
         try {
-          await this.$store.dispatch('auth/login', this.input)
+          await this.$store.dispatch('auth/signup', this.input)
           this.$router.push('/')
         } catch (e) {
           this.status.isError = true

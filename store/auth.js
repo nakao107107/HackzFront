@@ -23,6 +23,17 @@ export const actions = {
     commit('setLoginStatus', true)
   },
 
+  async signup({ commit }, payload) {
+    const { data, error } = await this.$http().post('/users/signup', payload)
+
+    if (error) {
+      throw new Error('新規登録に失敗しました')
+    }
+
+    commit('setToken', data.access_token)
+    commit('setLoginStatus', true)
+  },
+
   getToken(){
     return this.$cookies.get('token')
   }
