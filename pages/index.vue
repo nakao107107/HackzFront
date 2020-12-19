@@ -2,19 +2,22 @@
   <div class="bg-dark vh-100 vw-100 d-flex justify-content-center align-items-center">
     <div class="d-flex">
       <!--        menu-->
-      <div class="d-flex justify-content-center align-items-center mr-5">
+      <div
+        class="d-flex justify-content-center align-items-center"
+        style="margin-right: 100px"
+      >
         <div class="d-flex">
           <div class="d-flex flex-column align-items-center mr-5">
-            <button class="btn btn-primary menu-btn" @click="openCreateMeetingModal">
+            <button class="btn btn-primary menu-btn mb-3" @click="openCreateMeetingModal">
               <i class="fas fa-video"></i>
             </button>
-            <span>新規ミーティング</span>
+            <span class="btn-label">新規ミーティング</span>
           </div>
           <div class="d-flex flex-column align-items-center">
-            <button class="btn btn-secondary menu-btn" @click="openEnterMeetingModal">
+            <button class="btn btn-secondary menu-btn mb-3" @click="openEnterMeetingModal">
               <i class="fas fa-plus-square"></i>
             </button>
-            <span>参加</span>
+            <span class="btn-label">参加</span>
           </div>
         </div>
       </div>
@@ -121,6 +124,10 @@ export default {
     border-radius: 30px;
     line-height: 70px;
     padding: 10px;
+    transition: .3s;
+    &:hover {
+      transform: translateY(-5%);
+    }
   }
 
   .menu-card {
@@ -155,5 +162,9 @@ export default {
     padding: 10px;
     height: 300px;
     overflow-y: auto;
+  }
+
+  .btn-label {
+    font-size: 13px;
   }
 </style>
