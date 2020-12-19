@@ -85,31 +85,31 @@
     </div>
     <div class="footer-menu d-flex justify-content-between align-items-center">
       <div class="d-flex">
-        <button class="footer-btn" @click="switchMicStatus">
+        <button class="btn footer-btn" @click="switchMicStatus">
           <i class="fas fa-microphone text-white" v-if="status.isMicOn"></i>
           <i class="fas fa-microphone-slash text-white" v-else></i>
           <span>マイク</span>
         </button>
-        <button class="footer-btn" @click="switchVideoStatus">
+        <button class="btn footer-btn" @click="switchVideoStatus">
           <i class="fas fa-video text-white" v-if="status.isVideoOn"></i>
           <i class="fas fa-video-slash text-white" v-else></i>
           <span>ビデオ</span>
         </button>
-        <button class="footer-btn" @click="switchLoadingStatus">
+        <button class="btn footer-btn" @click="switchLoadingStatus">
           <i class="fas fa-spinner text-white" :class="{'fa-spin': status.isLoading}"></i>
           <span>通信不良</span>
         </button>
-        <button class="footer-btn" @click="switchRecordingStatus">
+        <button class="btn footer-btn" @click="switchRecordingStatus">
           <i class="fas fa-pause text-white"v-if="status.isRecording"></i>
           <i class="fas fa-play text-white" v-else></i>
           <span>リピート動画</span>
         </button>
-        <button class="footer-btn" @click="switchRepeatingStatus" v-if="filePath">
+        <button class="btn footer-btn" @click="switchRepeatingStatus" v-if="filePath">
           <i class="fas fa-redo-alt text-white" :class="{'fa-spin': status.isRepeating}"></i>
           <span>リピート</span>
         </button>
       </div>
-      <button class="footer-btn" @click="switchSharingStatus">
+      <button class="btn footer-btn" @click="switchSharingStatus">
         <i class="fas fa-desktop text-success"></i>
         <span class="text-success">画面共有</span>
       </button>
