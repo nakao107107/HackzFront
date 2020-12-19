@@ -201,6 +201,7 @@
         },
         videoTileWasRemoved: (tileId) => {
           let targetTile = this.videoTileInfo.find((tile) => tile.tileId == tileId)
+          console.log(tileId, targetTile)
           if(!targetTile){
             return
           }
@@ -262,12 +263,10 @@
           }
           //空いているタイルにattendeeをbind
           targetTile.attendeeId = presentAttendeeId
-          targetTile.tileId = 0
           targetTile.userId = this.attendees.find(attendee => attendee.chime_attendee_id == presentAttendeeId).user_id
         } else {
           //退出処理
           if(targetTile){
-            targetTile.tileId = 0
             targetTile.attendeeId = ''
             targetTile.userId = ''
           }
