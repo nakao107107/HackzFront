@@ -31,7 +31,7 @@
       </div>
       <span class="text-danger mb-2" v-if="status.isError">電子メールまたはパスワードが正しくありません</span>
       <div class="form-group text-right">
-        <button class="btn btn-secondary font-weight-bold" @click="login">サイン アップ</button>
+        <button class="btn btn-secondary font-weight-bold" @click="signup">サイン アップ</button>
       </div>
     </div>
   </div>
@@ -53,11 +53,11 @@
       }
     },
     methods: {
-      async login() {
+      async signup() {
         this.status.isSubmitting = true
         try {
           await this.$store.dispatch('auth/signup', this.input)
-          this.$router.push('/')
+          this.$router.push('/auth/registername')
         } catch (e) {
           this.status.isError = true
           this.status.isSubmitting = false
