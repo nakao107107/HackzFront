@@ -1,5 +1,5 @@
 export default async function ({ app, store, route, redirect }) {
-  if(route.path == '/auth/login'){
+  if(route.path == '/auth/login' || route.path == '/auth/signup'){
     return
   }
   const token = (await app.$cookies.get('token'))
