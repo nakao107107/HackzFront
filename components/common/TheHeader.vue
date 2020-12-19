@@ -5,8 +5,30 @@
       height="25px"
       style="object-fit: contain"
       alt="ooom">
+    <el-popover
+      width="300px"
+    >
+      <div class="mr-5">
+        <span class="text-white font-weight-bold">{{profile.name}}</span>
+        <br>
+        <span class="text-white font-weight-bold">{{profile.email}}</span>
+      </div>
+      <button
+        class="btn icon"
+        slot="reference"
+      >{{profile.name.slice(0, 2)}}</button>
+    </el-popover>
   </div>
 </template>
+
+<script>
+  import {mapGetters} from 'vuex'
+  export default {
+    computed: {
+      ...mapGetters('profile', ['profile'])
+    }
+  }
+</script>
 
 <style lang="scss" scoped>
   .header {
@@ -17,6 +39,12 @@
   .icon {
     width: 30px;
     height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    font-weight: bold;
+    color: $white;
     border-radius: 7px;
     background: $primary;
     cursor: pointer;

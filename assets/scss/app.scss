@@ -43,7 +43,7 @@ body {
 .el-popover {
   padding: 10px;
   background: $dark;
-  border: none;
+  border: 1px solid $default;
 }
 
 .popper__arrow {
