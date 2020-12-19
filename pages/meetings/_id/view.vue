@@ -1,5 +1,20 @@
 <template>
   <div class="vh-100 vw-100" style="background-color: #111111">
+    <div class="header">
+      <el-popover width="400px">
+        <div>
+          <h5 class="font-weight-bold text-white">{{meeting.topic}}</h5>
+          <div>
+            <label class="d-inline-block mr-3">ミーティングID</label>
+            {{meeting.id}}
+          </div>
+          <p id="copyIDLink" class="text-secondary mb-0 copy" @click="copyID">コピー</p>
+        </div>
+        <button class="btn btn-sm btn-dark text-success" slot="reference">
+          <i class="fas fa-shield-alt"></i>
+        </button>
+      </el-popover>
+    </div>
     <ConfirmVideoModal
       :blob="blob"
       :blob-url="blobUrl"
@@ -33,7 +48,7 @@
         >
           <video
             :id="`video-preview-${n}`"
-            class="w-100"
+            class="w-100 h-100"
             :class="[
               videoTileInfo.find(tile => tile.tileNum == n).isLoading ||
               videoTileInfo.find(tile => tile.tileNum == n).isRepeating ||
@@ -41,6 +56,7 @@
               ? 'd-none'
               : 'd-block',
             ]"
+            style="object-fit: contain"
           />
           <div
             :class="videoTileInfo.find(tile => tile.tileNum == n).isVideoOn ? 'd-none' : 'd-flex'"
@@ -123,9 +139,13 @@
   import { mapGetters } from 'vuex'
   import ConfirmVideoModal from "../../../components/meetings/ConfirmVideoModal";
   export default {
+    layout: 'session',
     components: {ConfirmVideoModal},
     async fetch({store, route}){
-      await store.dispatch('attendees/list/fetch', route.params.id)
+      await Promise.all([
+        store.dispatch('attendees/list/fetch', route.params.id),
+        store.dispatch('meetings/detail/fetch', route.params.id)
+      ])
     },
     data(){
       return {
@@ -362,9 +382,14 @@
         }
       },
       ...mapGetters('profile', ['profile']),
-      ...mapGetters('attendees/list', ['attendees'])
+      ...mapGetters('attendees/list', ['attendees']),
+      ...mapGetters('meetings/detail', ['meeting'])
     },
     methods: {
+      copyID(){
+        navigator.clipboard.writeText(this.meeting.id)
+        document.getElementById('copyIDLink').innerText = '☑︎IDをコピーしました'
+      },
       async fetchAttendees(){
         await this.$store.dispatch('attendees/list/fetch', this.$route.params.id)
       },
@@ -521,6 +546,12 @@
 </script>
 
 <style lang="scss" scoped>
+  .header {
+    padding: 5px;
+    height: 40px;
+    width: 100%;
+    background: $dark;
+  }
   .video-container {
     height: calc(100% - 40px);
   }
@@ -592,6 +623,14 @@
     background-color: #7858BC;
     font-size: 30px;
     font-weight: bold;
+  }
+
+  .copy {
+    display: inline-block;
+    cursor: pointer;
+    &:hover {
+      border-bottom: 1px solid $secondary;
+    }
   }
 
 </style>

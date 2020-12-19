@@ -1,4 +1,34 @@
+export const state = () => ({
+  meeting: {}
+})
+
+export const getters = {
+  meeting: (state) => state.meeting
+}
+
+export const mutations = {
+  setMeeting(state, payload) {
+    state.meeting = {}
+    state.meeting = payload
+  }
+}
+
 export const actions = {
+  /*
+  meeting詳細を取得する
+  */
+  async fetch({ commit }, meetingId) {
+
+    const { data, error } = await this.$http().get(
+      `/meetings/${meetingId}`
+    )
+    console.log(data)
+    if (error) {
+      throw new Error('ミーティングの取得に失敗しました')
+    }
+
+    commit('setMeeting', data)
+  },
   /*
   meetingを作成する
   */
