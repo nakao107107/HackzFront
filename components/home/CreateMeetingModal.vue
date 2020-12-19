@@ -23,7 +23,10 @@
       </div>
       <div class="d-flex justify-content-end">
         <button class="btn btn-outline-light mr-3" @click="close">キャンセル</button>
-        <button class="btn btn-secondary" @click="register">保存</button>
+        <button class="btn btn-secondary" @click="register" :disabled="status.isSaving">
+          <i class="fas fa-spinner fa-spin" v-if="status.isSaving"></i>
+          保存
+        </button>
       </div>
     </div>
   </BModal>
@@ -43,13 +46,18 @@
           topic: '',
           start_time: '',
           end_time: ''
+        },
+        status: {
+          isSaving: false
         }
       }
     },
     methods: {
       async register(){
+        this.status.isSaving = true
         await this.$store.dispatch('meetings/detail/register', this.input)
         await this.$store.dispatch('meetings/list/fetch')
+        this.status.isSaving = false
         this.$emit('close-modal')
       },
       close(){

@@ -12,7 +12,10 @@
       <video :src="blobUrl" class="mb-3" width="100%" autoplay loop muted></video>
       <div class="d-flex justify-content-end">
         <button class="btn btn-outline-light mr-2" @click="cancel">キャンセル</button>
-        <button class="btn btn-secondary mr-2" @click="save">保存</button>
+        <button class="btn btn-secondary mr-2" @click="save" :disabled="status.isSaving">
+          <i class="fas fa-spinner fa-spin mr-1" v-if="status.isSaving"></i>
+          保存
+        </button>
       </div>
     </div>
   </BModal>
@@ -37,7 +40,10 @@
     },
     data(){
       return {
-        meetingId: ''
+        meetingId: '',
+        status: {
+          isSaving: false
+        }
       }
     },
     computed: {
@@ -60,7 +66,9 @@
         }
       },
       async uploadFile(params){
+        this.status.isSaving = true
         const filePath = await this.$store.dispatch('file/upload', params)
+        this.status.isSaving = false
         this.$emit('file-saved', filePath)
         this.$emit('close-modal')
       }
