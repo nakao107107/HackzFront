@@ -8,7 +8,10 @@ export const mutations = {
   },
   setToken(state, payload) {
     this.$cookies.set('token', payload, { path: '/' })
-  }
+  },
+  removeToken(state) {
+    this.$cookies.remove('token')
+  },
 }
 
 export const actions = {
@@ -40,6 +43,11 @@ export const actions = {
     if (error) {
       throw new Error('名前の変更に失敗しました')
     }
+  },
+
+  logout({ commit }) {
+    console.log("store sign out")
+    commit('removeToken')
   },
 
   getToken(){

@@ -8,10 +8,15 @@
     <el-popover
       width="300px"
     >
-      <div class="mr-5">
-        <span class="text-white font-weight-bold">{{profile.name}}</span>
-        <br>
-        <span class="text-white font-weight-bold">{{profile.email}}</span>
+      <div>
+        <div class="p-3 profile-box">
+          <span class="text-white font-weight-bold">{{profile.name}}</span>
+          <br>
+          <span class="text-white font-weight-bold">{{profile.email}}</span>
+        </div>
+        <div class="signout p-2" @click="signout">
+          サインアウト
+        </div>
       </div>
       <button
         class="btn icon"
@@ -26,6 +31,12 @@
   export default {
     computed: {
       ...mapGetters('profile', ['profile'])
+    },
+    methods: {
+      signout(){
+        this.$store.dispatch('auth/logout')
+        this.$router.push('/auth/login')
+      }
     }
   }
 </script>
@@ -48,5 +59,18 @@
     border-radius: 7px;
     background: $primary;
     cursor: pointer;
+  }
+
+  .profile-box {
+    border-bottom: 1px solid $default;
+  }
+
+  .signout {
+    cursor: pointer;
+    transition: .3s;
+    &:hover {
+      color: $white;
+      background: lighten($dark, 10%);
+    }
   }
 </style>

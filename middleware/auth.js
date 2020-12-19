@@ -1,4 +1,7 @@
-export default async function ({ app, store, redirect }) {
+export default async function ({ app, store, route, redirect }) {
+  if(route.path == '/auth/login'){
+    return
+  }
   const token = (await app.$cookies.get('token'))
   if(!token){
     redirect('/auth/login')
