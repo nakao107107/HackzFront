@@ -43,7 +43,7 @@
       async close(){
         let reader = new FileReader()
         console.log(this.blob)
-        await reader.readAsDataURL(this.blob)
+        await reader.readAsArrayBuffer(this.blob)
         reader.onload = async (e) => {
           const params = {
             dir: 'meetings/',
@@ -55,10 +55,10 @@
       async uploadFile(params){
         const filePath = await this.$store.dispatch('file/upload', params)
         //データ送信
-        this.sendMovie()
+        this.sendMovie(filePath)
         this.$emit('close-modal')
       },
-      sendMovie(){
+      sendMovie(filePath){
         firebase
           .database()
           .ref('repeat')
@@ -67,7 +67,7 @@
               session_id: this.$route.params.id,
               mode: true,
               user_id: this.profile.id,
-              url: 'https://hackz.s3-ap-northeast-1.amazonaws.com/meetings/test.webm'
+              url: `https://hackz.s3-ap-northeast-1.amazonaws.com/${filePath}`
             },
             () => {}
           )

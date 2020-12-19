@@ -7,7 +7,7 @@ export const actions = {
 
     //動画のアップロード
     let { error } = await this.$http(presignedUrl, {
-      'Content-Type': 'video/webm',
+      'Content-Type': 'video/webm;codecs=vp9',
     }).put('', params.file)
 
     if (error) {

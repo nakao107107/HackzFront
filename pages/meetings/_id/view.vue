@@ -467,7 +467,6 @@
       },
       saveMovie(blob){
         this.blob = blob
-        this.blob.name = 'test.webm'
         this.blobUrl = window.URL.createObjectURL(this.blob)
         this.status.isModalOpen = true
       }
