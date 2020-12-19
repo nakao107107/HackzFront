@@ -61,7 +61,6 @@
       },
       async uploadFile(params){
         const filePath = await this.$store.dispatch('file/upload', params)
-        console.log(filePath)
         this.$emit('file-saved', filePath)
         this.$emit('close-modal')
       }

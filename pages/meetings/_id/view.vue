@@ -22,26 +22,37 @@
         :class="status.isSharingOn ? 'w-25 d-flex flex-column justify-content-center' : 'row m-0 p-0 w-100'"
       >
         <div
-          id="video-container-1"
+          v-for="n of 4"
+          :key="n"
+          :id="`video-container-${n}`"
           class="justify-content-center align-items-center p-2"
           :class="[
-            videoTileInfo.find(tile => tile.tileNum == 1 && tile.attendeeId != '') ? 'd-flex' : 'd-none',
+            videoTileInfo.find(tile => tile.tileNum == n && tile.attendeeId != '') ? 'd-flex' : 'd-none',
             status.isSharingOn ? 'w-100 h-25' : `attendee-num-${attendeeNum}`
           ]"
         >
           <video
-            id="video-preview-1"
+            :id="`video-preview-${n}`"
             class="w-100"
             :class="[
-              videoTileInfo.find(tile => tile.tileNum == 1).isLoading || videoTileInfo.find(tile => tile.tileNum == 1).isRepeating ? 'd-none' : 'd-block',
+              videoTileInfo.find(tile => tile.tileNum == n).isLoading ||
+              videoTileInfo.find(tile => tile.tileNum == n).isRepeating ||
+              !videoTileInfo.find(tile => tile.tileNum == n).isVideoOn
+              ? 'd-none'
+              : 'd-block',
             ]"
           />
           <div
-            :class="videoTileInfo.find(tile => tile.tileNum == 1).isLoading ? 'd-block' : 'd-none'"
+            :class="videoTileInfo.find(tile => tile.tileNum == n).isVideoOn ? 'd-none' : 'd-block'"
+          >
+            <p class="text-white">ビデオ停止中</p>
+          </div>
+          <div
+            :class="videoTileInfo.find(tile => tile.tileNum == n).isLoading ? 'd-block' : 'd-none'"
             class="position-relative"
           >
             <img
-              id="video-preview-1-loading"
+              :id="`video-preview-${n}-loading`"
               class="w-100"
               style="object-fit: contain"
             >
@@ -53,114 +64,9 @@
             </div>
           </div>
           <div
-            :class="videoTileInfo.find(tile => tile.tileNum == 1).isRepeating ? 'd-block' : 'd-none'"
+            :class="videoTileInfo.find(tile => tile.tileNum == n).isRepeating ? 'd-block' : 'd-none'"
           >
-            <video id="video-1-repeating" class="w-100" loop autoplay muted></video>
-          </div>
-        </div>
-        <div
-          id="video-container-2"
-          class="justify-content-center align-items-center p-2"
-          :class="[
-            videoTileInfo.find(tile => tile.tileNum == 2 && tile.attendeeId != '') ? 'd-flex' : 'd-none',
-            status.isSharingOn ? 'w-100 h-25' : `attendee-num-${attendeeNum}`
-          ]"
-        >
-          <video
-            id="video-preview-2"
-            class="w-100"
-            :class="videoTileInfo.find(tile => tile.tileNum == 2).isLoading || videoTileInfo.find(tile => tile.tileNum == 2).isRepeating ? 'd-none' : 'd-block'"
-          />
-          <div
-            :class="videoTileInfo.find(tile => tile.tileNum == 2).isLoading ? 'd-block' : 'd-none'"
-            class="position-relative"
-          >
-            <img
-              id="video-preview-2-loading"
-              class="w-100"
-              style="object-fit: contain"
-            >
-            <div class="position-absolute top-0 left-0 w-100 h-100 bg-dark d-flex justify-content-center align-items-center" style="opacity: .7">
-              <div class="text-white text-center">
-                <h5>接続中....</h5>
-                <h1 class="fas fa-spinner fa-spin"></h1>
-              </div>
-            </div>
-          </div>
-          <div
-            :class="videoTileInfo.find(tile => tile.tileNum == 2).isRepeating ? 'd-block' : 'd-none'"
-          >
-            <video id="video-2-repeating" class="w-100" loop autoplay muted></video>
-          </div>
-        </div>
-        <div
-          id="video-container-3"
-          class="justify-content-center align-items-center p-2"
-          :class="[
-            videoTileInfo.find(tile => tile.tileNum == 3 && tile.attendeeId != '') ? 'd-flex' : 'd-none',
-            status.isSharingOn ? 'w-100 h-25' : `attendee-num-${attendeeNum}`
-          ]"
-        >
-          <video
-            id="video-preview-3"
-            class="w-100"
-            :class="videoTileInfo.find(tile => tile.tileNum == 3).isLoading || videoTileInfo.find(tile => tile.tileNum == 3).isRepeating ? 'd-none' : 'd-block'"
-          />
-          <div
-            :class="videoTileInfo.find(tile => tile.tileNum == 3).isLoading ? 'd-block' : 'd-none'"
-            class="position-relative"
-          >
-            <img
-              id="video-preview-3-loading"
-              class="w-100"
-              style="object-fit: contain"
-            >
-            <div class="position-absolute top-0 left-0 w-100 h-100 bg-dark d-flex justify-content-center align-items-center" style="opacity: .7">
-              <div class="text-white text-center">
-                <h5>接続中....</h5>
-                <h1 class="fas fa-spinner fa-spin"></h1>
-              </div>
-            </div>
-          </div>
-          <div
-            :class="videoTileInfo.find(tile => tile.tileNum == 3).isRepeating ? 'd-block' : 'd-none'"
-          >
-            <video id="video-3-repeating" class="w-100" loop autoplay muted></video>
-          </div>
-        </div>
-        <div
-          id="`video-container-4"
-          class="justify-content-center align-items-center p-2"
-          :class="[
-            videoTileInfo.find(tile => tile.tileNum == 4 && tile.attendeeId != '') ? 'd-flex' : 'd-none',
-            status.isSharingOn ? 'w-100 h-25' : `attendee-num-${attendeeNum}`
-          ]"
-        >
-          <video
-            id="video-preview-4"
-            class="w-100"
-            :class="videoTileInfo.find(tile => tile.tileNum == 4).isLoading || videoTileInfo.find(tile => tile.tileNum == 1).isRepeating ? 'd-none' : 'd-block'"
-          />
-          <div
-            :class="videoTileInfo.find(tile => tile.tileNum == 4).isLoading ? 'd-block' : 'd-none'"
-            class="position-relative"
-          >
-            <img
-              id="video-preview-4-loading"
-              class="w-100"
-              style="object-fit: contain"
-            >
-            <div class="position-absolute top-0 left-0 w-100 h-100 bg-dark d-flex justify-content-center align-items-center" style="opacity: .7">
-              <div class="text-white text-center">
-                <h5>接続中....</h5>
-                <h1 class="fas fa-spinner fa-spin"></h1>
-              </div>
-            </div>
-          </div>
-          <div
-            :class="videoTileInfo.find(tile => tile.tileNum == 4).isRepeating ? 'd-block' : 'd-none'"
-          >
-            <video id="video-4-repeating" class="w-100" loop autoplay muted></video>
+            <video :id="`video-${n}-repeating`" class="w-100" loop autoplay muted></video>
           </div>
         </div>
       </div>
@@ -260,7 +166,11 @@
         'meetings/room/fetch',
         this.$route.params.id
       )
+      const localObserver = {
+        videoTileDidUpdate: async (tileState) => {
 
+        }
+      }
       //attendee専用のobserver
       const attendeeObserver = {
         videoTileDidUpdate: async (tileState) => {
@@ -284,9 +194,17 @@
           targetTile.attendeeId = tileState.boundAttendeeId
           targetTile.tileId = tileState.tileId
           targetTile.userId = tileState.boundExternalUserId
+          targetTile.isVideoOn = true
           let videoElement = null
           videoElement = document.getElementById(`video-preview-${targetTile.tileNum}`)
           this.meetingSession.audioVideo.bindVideoElement(targetTile.tileId, videoElement)
+        },
+        videoTileWasRemoved: (tileId) => {
+          let targetTile = this.videoTileInfo.find((tile) => tile.tileId == tileId)
+          if(!targetTile){
+            return
+          }
+          targetTile.isVideoOn = false
         },
       }
 
@@ -475,9 +393,7 @@
           return
         }
         targetTile.isRepeating = status.mode
-        console.log(targetTile)
         const videoRepeating = document.getElementById(`video-${targetTile.tileNum}-repeating`)
-        console.log(`video-${targetTile.tileNum}-repeating`)
         videoRepeating.src = status.url
       },
       switchRecordingStatus(){
@@ -548,7 +464,6 @@
         this.filePath = ''
       },
       saveFile(filePath){
-        console.log('savefile', filePath)
         this.filePath = filePath
       }
     }
