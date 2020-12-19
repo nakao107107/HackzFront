@@ -1,5 +1,10 @@
 <template>
-  <div class="header d-flex justify-content-end align-items-center p-4">
+  <div class="header d-flex justify-content-between align-items-center p-4">
+    <img
+      src="https://hackz.s3-ap-northeast-1.amazonaws.com/system/logo.png"
+      height="25px"
+      style="object-fit: contain"
+      alt="ooom">
   </div>
 </template>
 
