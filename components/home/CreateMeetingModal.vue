@@ -13,14 +13,6 @@
         <label class="font-weight-bold">トピック</label>
         <input class="form-control" v-model="input.topic">
       </div>
-      <div class="form-group">
-        <label class="font-weight-bold">日時</label>
-        <div class="d-flex align-items-center">
-          <input class="form-control" type="date" v-model="input.start_time">
-          <span class="mx-2">~</span>
-          <input class="form-control" type="date" v-model="input.end_time">
-        </div>
-      </div>
       <div class="d-flex justify-content-end">
         <button class="btn btn-outline-light mr-3" @click="close">キャンセル</button>
         <button class="btn btn-secondary" @click="register" :disabled="status.isSaving">
@@ -43,9 +35,7 @@
     data(){
       return {
         input: {
-          topic: '',
-          start_time: '',
-          end_time: ''
+          topic: ''
         },
         status: {
           isSaving: false

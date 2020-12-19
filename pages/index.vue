@@ -34,8 +34,6 @@
           >
             <div>
               <h5 class="font-weight-bold text-white">{{meeting.topic}}</h5>
-              <small>{{$moment(meeting.start_time).format('HH:mm')}} ~ {{$moment(meeting.end_time).format('HH:mm')}}</small>
-              <br>
               <small>ミーティングID: {{meeting.id}}</small>
             </div>
             <button
