@@ -113,27 +113,7 @@
         <i class="fas fa-desktop text-success"></i>
         <span class="text-success">画面共有</span>
       </button>
-      <el-popover
-        placement="top"
-        trigger="click"
-        width="250px"
-      >
-        <ul
-          class="list-group border-0 p-0 m-0"
-        >
-          <li
-            class="text-center border-bottom list-group-item list-group-item-action cursor-pointer"
-          >
-            セッションを完全に終了
-          </li>
-          <li
-            class="text-center border-0 list-group-item list-group-item-action cursor-pointer"
-          >
-            セッションから退出
-          </li>
-        </ul>
-        <button class="btn btn-sm btn-danger" slot="reference">終了</button>
-      </el-popover>
+      <button class="btn btn-sm btn-danger" @click="exitMeeting">退出</button>
     </div>
   </div>
 </template>
@@ -459,9 +439,9 @@
         if(!targetTile){
           return
         }
-        targetTile.isRepeating = status.mode
         const videoRepeating = document.getElementById(`video-${targetTile.tileNum}-repeating`)
         videoRepeating.src = status.url
+        targetTile.isRepeating = status.mode
       },
       switchRecordingStatus(){
         if(this.status.isRecording){
@@ -532,6 +512,9 @@
       },
       saveFile(filePath){
         this.filePath = filePath
+      },
+      exitMeeting(){
+        this.$router.push('/')
       }
     }
   }
@@ -610,6 +593,5 @@
     font-size: 30px;
     font-weight: bold;
   }
-
 
 </style>

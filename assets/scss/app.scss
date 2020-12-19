@@ -39,3 +39,13 @@ body {
     padding-bottom: 3px;
   }
 }
+
+.el-popover {
+  padding: 10px;
+  background: $dark;
+  border: none;
+}
+
+.popper__arrow {
+  display: none !important;
+}
