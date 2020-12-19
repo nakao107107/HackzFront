@@ -11,7 +11,13 @@
       <h5 class="font-weight-bold">ミーティングをスケジューリング</h5>
       <div class="form-group">
         <label class="font-weight-bold">トピック</label>
-        <input class="form-control" v-model="input.topic">
+        <input
+          class="form-control"
+          :class="{'error': status.isError}"
+          v-model="input.topic"
+          placeholder="トピックを入力してください"
+        >
+        <span class="text-danger mb-2" v-if="status.isError">トピックは必須です</span>
       </div>
       <div class="d-flex justify-content-end">
         <button class="btn btn-outline-light mr-3" @click="close">キャンセル</button>
@@ -38,12 +44,18 @@
           topic: ''
         },
         status: {
+          isError: false,
           isSaving: false
         }
       }
     },
     methods: {
       async register(){
+        //トピックがからの時はreturn
+        if(!this.input.topic){
+          this.status.isError = true
+          return
+        }
         this.status.isSaving = true
         await this.$store.dispatch('meetings/detail/register', this.input)
         await this.$store.dispatch('meetings/list/fetch')
@@ -51,8 +63,16 @@
         this.$emit('close-modal')
       },
       close(){
+        this.status.isError = false
+        this.topic = ''
         this.$emit('close-modal')
       }
     }
   }
 </script>
+
+<style lang="scss" scoped>
+  .error {
+    border: 1px solid $danger;
+  }
+</style>

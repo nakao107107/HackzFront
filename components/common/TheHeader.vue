@@ -68,6 +68,7 @@
   .signout {
     cursor: pointer;
     transition: .3s;
+    color: $white;
     &:hover {
       color: $white;
       background: lighten($dark, 10%);
