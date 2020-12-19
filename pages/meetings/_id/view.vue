@@ -69,7 +69,7 @@
           <video
             id="video-preview-2"
             class="w-100"
-            :class="videoTileInfo.find(tile => tile.tileNum == 2).isLoading ? 'd-none' : 'd-block'"
+            :class="videoTileInfo.find(tile => tile.tileNum == 2).isLoading || videoTileInfo.find(tile => tile.tileNum == 2).isRepeating ? 'd-none' : 'd-block'"
           />
           <div
             :class="videoTileInfo.find(tile => tile.tileNum == 2).isLoading ? 'd-block' : 'd-none'"
@@ -87,6 +87,11 @@
               </div>
             </div>
           </div>
+          <div
+            :class="videoTileInfo.find(tile => tile.tileNum == 2).isRepeating ? 'd-block' : 'd-none'"
+          >
+            <video id="video-2-repeating" class="w-100" loop autoplay muted></video>
+          </div>
         </div>
         <div
           id="video-container-3"
@@ -99,7 +104,7 @@
           <video
             id="video-preview-3"
             class="w-100"
-            :class="videoTileInfo.find(tile => tile.tileNum == 3).isLoading ? 'd-none' : 'd-block'"
+            :class="videoTileInfo.find(tile => tile.tileNum == 3).isLoading || videoTileInfo.find(tile => tile.tileNum == 3).isRepeating ? 'd-none' : 'd-block'"
           />
           <div
             :class="videoTileInfo.find(tile => tile.tileNum == 3).isLoading ? 'd-block' : 'd-none'"
@@ -117,6 +122,11 @@
               </div>
             </div>
           </div>
+          <div
+            :class="videoTileInfo.find(tile => tile.tileNum == 3).isRepeating ? 'd-block' : 'd-none'"
+          >
+            <video id="video-3-repeating" class="w-100" loop autoplay muted></video>
+          </div>
         </div>
         <div
           id="`video-container-4"
@@ -129,7 +139,7 @@
           <video
             id="video-preview-4"
             class="w-100"
-            :class="videoTileInfo.find(tile => tile.tileNum == 4).isLoading ? 'd-none' : 'd-block'"
+            :class="videoTileInfo.find(tile => tile.tileNum == 4).isLoading || videoTileInfo.find(tile => tile.tileNum == 1).isRepeating ? 'd-none' : 'd-block'"
           />
           <div
             :class="videoTileInfo.find(tile => tile.tileNum == 4).isLoading ? 'd-block' : 'd-none'"
@@ -146,6 +156,11 @@
                 <h1 class="fas fa-spinner fa-spin"></h1>
               </div>
             </div>
+          </div>
+          <div
+            :class="videoTileInfo.find(tile => tile.tileNum == 4).isRepeating ? 'd-block' : 'd-none'"
+          >
+            <video id="video-4-repeating" class="w-100" loop autoplay muted></video>
           </div>
         </div>
       </div>
@@ -312,6 +327,7 @@
 
       //入退出処理
       const callback = async (presentAttendeeId, present) => {
+        await this.fetchAttendees()
         let targetTile = this.videoTileInfo.find((tile) => tile.attendeeId == presentAttendeeId)
         if (present) {
           //contentの場合return
@@ -384,6 +400,9 @@
       ...mapGetters('attendees/list', ['attendees'])
     },
     methods: {
+      async fetchAttendees(){
+        await this.$store.dispatch('attendees/list/fetch', this.$route.params.id)
+      },
       async switchVideoStatus(){
         await this.meetingSession.audioVideo.chooseVideoInputDevice(
           this.selectedVideoDevice
@@ -451,13 +470,14 @@
       },
       fetchRepeatStatus(snap){
         const status = snap.val()
-        console.log(status)
         const targetTile = this.videoTileInfo.find((tile)=> tile.userId == status.user_id)
         if(!targetTile){
           return
         }
         targetTile.isRepeating = status.mode
+        console.log(targetTile)
         const videoRepeating = document.getElementById(`video-${targetTile.tileNum}-repeating`)
+        console.log(`video-${targetTile.tileNum}-repeating`)
         videoRepeating.src = status.url
       },
       switchRecordingStatus(){
@@ -487,7 +507,7 @@
         }else{
           this.startRepeating()
         }
-        this.status.isRepeating = !this.status.isRecording
+        this.status.isRepeating = !this.status.isRepeating
       },
       startRepeating(){
         firebase
