@@ -34,6 +34,14 @@ export const actions = {
     commit('setLoginStatus', true)
   },
 
+  async registerName({ commit }, name) {
+    const { data, error } = await this.$http().put('/users/profile', {name: name})
+
+    if (error) {
+      throw new Error('名前の変更に失敗しました')
+    }
+  },
+
   getToken(){
     return this.$cookies.get('token')
   }

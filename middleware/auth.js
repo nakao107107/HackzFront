@@ -5,7 +5,12 @@ export default async function ({ app, store, redirect }) {
   }
   try {
     await store.dispatch('profile/fetch')
+    const profile = store.getters['profile/profile']
+    if(! profile.name){
+      redirect('/auth/registername')
+    }
   } catch(e) {
+    console.log(e)
     redirect('/auth/login')
   }
 }
