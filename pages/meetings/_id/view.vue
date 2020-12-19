@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-dark vh-100 vw-100">
+  <div class="vh-100 vw-100" style="background-color: #111111">
     <ConfirmVideoModal
       :blob="blob"
       :blob-url="blobUrl"
@@ -43,9 +43,21 @@
             ]"
           />
           <div
-            :class="videoTileInfo.find(tile => tile.tileNum == n).isVideoOn ? 'd-none' : 'd-block'"
+            :class="videoTileInfo.find(tile => tile.tileNum == n).isVideoOn ? 'd-none' : 'd-flex'"
+            class="justify-content-center align-items-center w-100"
           >
-            <p class="text-white">ビデオ停止中</p>
+            <div
+            >
+              <p
+                class="text-white video-stop-icon"
+              >
+                {{
+                videoTileInfo.find(tile => tile.tileNum == n).name
+                ? videoTileInfo.find(tile => tile.tileNum == n).name.slice(0, 2)
+                : '名無'
+                }}
+              </p>
+            </div>
           </div>
           <div
             :class="videoTileInfo.find(tile => tile.tileNum == n).isLoading ? 'd-block' : 'd-none'"
@@ -168,9 +180,40 @@
       )
       const localObserver = {
         videoTileDidUpdate: async (tileState) => {
+          if (!tileState.boundExternalUserId) {
+            return
+          }
+          if(tileState.isContent){
+            return
+          }
 
+          if(! tileState.localTile){
+            return
+          }
+
+          console.log(tileState)
+
+          let targetTile = this.videoTileInfo.find((tile) => tile.attendeeId == tileState.boundAttendeeId)
+          if(! targetTile){
+            //空いているタイルの検索
+            targetTile = this.videoTileInfo.find((tile) => tile.attendeeId == '')
+            if(! targetTile){
+              console.log('このミーティングは満席です')
+              return
+            }
+          }
+          //空いているタイルにattendeeをbind
+          targetTile.attendeeId = tileState.boundAttendeeId
+          targetTile.tileId = tileState.tileId
+          targetTile.userId = tileState.boundExternalUserId
+          targetTile.isVideoOn = tileState.active
+          targetTile.name = this.attendees.find(attendee => attendee.chime_attendee_id == tileState.boundAttendeeId).name
+          let videoElement = null
+          videoElement = document.getElementById(`video-preview-${targetTile.tileNum}`)
+          this.meetingSession.audioVideo.bindVideoElement(targetTile.tileId, videoElement)
         }
       }
+
       //attendee専用のobserver
       const attendeeObserver = {
         videoTileDidUpdate: async (tileState) => {
@@ -178,6 +221,10 @@
             return
           }
           if(tileState.isContent){
+            return
+          }
+
+          if(tileState.localTile){
             return
           }
 
@@ -264,11 +311,13 @@
           //空いているタイルにattendeeをbind
           targetTile.attendeeId = presentAttendeeId
           targetTile.userId = this.attendees.find(attendee => attendee.chime_attendee_id == presentAttendeeId).user_id
+          targetTile.name = this.attendees.find(attendee => attendee.chime_attendee_id == presentAttendeeId).name
         } else {
           //退出処理
           if(targetTile){
             targetTile.attendeeId = ''
             targetTile.userId = ''
+            targetTile.name = ''
           }
         }
       }
@@ -294,6 +343,7 @@
 
       const audioElement = document.getElementById('audio')
       this.meetingSession.audioVideo.bindAudioElement(audioElement)
+      this.meetingSession.audioVideo.addObserver(localObserver)
       this.meetingSession.audioVideo.addObserver(attendeeObserver)
       this.meetingSession.audioVideo.addObserver(shareObserver)
       this.meetingSession.audioVideo.addContentShareObserver(shareObserver)
@@ -529,6 +579,18 @@
 
   .left-0 {
     left: 0;
+  }
+
+  .video-stop-icon {
+    height: 100px;
+    width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0;
+    background-color: #7858BC;
+    font-size: 30px;
+    font-weight: bold;
   }
 
 
