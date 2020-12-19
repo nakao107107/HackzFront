@@ -77,25 +77,26 @@
           </div>
           <div
             :class="videoTileInfo.find(tile => tile.tileNum == n).isLoading ? 'd-block' : 'd-none'"
-            class="position-relative"
+            class="position-relative w-100 h-100"
           >
             <img
               :id="`video-preview-${n}-loading`"
-              class="w-100"
-              style="object-fit: contain"
+              class="w-100 h-100"
+              style="object-fit: contain; opacity: .5"
             >
-            <div class="position-absolute top-0 left-0 w-100 h-100 bg-dark d-flex justify-content-center align-items-center" style="opacity: .7">
+            <div class="position-absolute top-0 left-0 w-100 h-100 d-flex justify-content-center align-items-center" style="opacity: .7">
               <div class="text-white text-center">
                 <h5>接続中....</h5>
                 <h1 class="fas fa-spinner fa-spin"></h1>
               </div>
             </div>
           </div>
-          <div
+          <video
+            :id="`video-${n}-repeating`"
             :class="videoTileInfo.find(tile => tile.tileNum == n).isRepeating ? 'd-block' : 'd-none'"
-          >
-            <video :id="`video-${n}-repeating`" class="w-100" loop autoplay muted></video>
-          </div>
+            class="w-100 h-100"
+            style="object-fit: contain"
+            loop autoplay muted></video>
         </div>
       </div>
     </div>
@@ -574,12 +575,11 @@
     background: $dark;
   }
   .video-container {
-    height: calc(100% - 40px);
+    height: calc(100% - 95px);
   }
   .footer-menu {
     padding-left: 10px;
     padding-right: 10px;
-    position: fixed;
     bottom: 0;
     background: $dark;
     height: 55px;
