@@ -148,26 +148,31 @@
         </div>
       </div>
     </div>
-    <div class="footer-menu d-flex justify-content-between">
+    <div class="footer-menu d-flex justify-content-between align-items-center">
       <div class="d-flex">
-        <button class="btn" @click="switchMicStatus">
+        <button class="footer-btn" @click="switchMicStatus">
           <i class="fas fa-microphone text-white" v-if="status.isMicOn"></i>
           <i class="fas fa-microphone-slash text-white" v-else></i>
+          <span>マイク</span>
         </button>
-        <button class="btn" @click="switchVideoStatus">
+        <button class="footer-btn" @click="switchVideoStatus">
           <i class="fas fa-video text-white" v-if="status.isVideoOn"></i>
           <i class="fas fa-video-slash text-white" v-else></i>
+          <span>ビデオ</span>
         </button>
-        <button class="btn" @click="switchLoadingStatus">
+        <button class="footer-btn" @click="switchLoadingStatus">
           <i class="fas fa-spinner text-white" :class="{'fa-spin': status.isLoading}"></i>
+          <span>通信不良</span>
         </button>
-        <button class="btn" @click="switchRecordingStatus">
+        <button class="footer-btn" @click="switchRecordingStatus">
           <i class="fas fa-pause text-white"v-if="status.isRecording"></i>
           <i class="fas fa-play text-white" v-else></i>
+          <span>リピート</span>
         </button>
       </div>
-      <button class="btn" @click="switchSharingStatus">
+      <button class="footer-btn" @click="switchSharingStatus">
         <i class="fas fa-desktop text-success"></i>
+        <span class="text-success">画面共有</span>
       </button>
       <button class="btn btn-sm btn-danger">終了</button>
     </div>
@@ -479,8 +484,35 @@
     height: calc(100% - 40px);
   }
   .footer-menu {
+    padding-left: 10px;
+    padding-right: 10px;
+    position: fixed;
+    bottom: 0;
     background: $dark;
-    height: 40px;
+    height: 55px;
+    width: 100%;
+    .footer-btn {
+      border:none;
+      background: $dark;
+      padding: 8px;
+      width: 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-radius: 5px;
+      &:hover {
+        background: lighten($dark, 10%);
+        transition: .3s;
+      }
+      span {
+        color: $white;
+        font-size: 10px;
+      }
+      i {
+        font-size: 20px;
+        margin-bottom: 4px;
+      }
+    }
   }
   .attendee-num {
     &-1 {
