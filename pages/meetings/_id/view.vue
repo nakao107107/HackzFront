@@ -552,6 +552,13 @@
         this.filePath = filePath
       },
       exitMeeting(){
+        //通信不良モード, リピートモードを付けっぱなしで退出されると面倒なので切り替えてから退出
+        if(this.status.isLoading){
+          this.switchLoadingStatus()
+        }
+        if(this.status.isRepeating){
+          this.switchRepeatingStatus()
+        }
         this.meetingSession.audioVideo.stop()
         this.$router.push('/')
       }
