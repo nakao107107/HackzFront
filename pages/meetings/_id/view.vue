@@ -14,6 +14,9 @@
           <i class="fas fa-shield-alt"></i>
         </button>
       </el-popover>
+      <span class="badge badge-secondary mode" v-if="status.isLoading">通信不良モード中...</span>
+      <span class="badge badge-danger mode" v-if="status.isRecording">リピート動画録画中...</span>
+      <span class="badge badge-success mode" v-if="status.isRepeating">リピートモード中...</span>
     </div>
     <ConfirmVideoModal
       :blob="blob"
@@ -569,10 +572,16 @@
 
 <style lang="scss" scoped>
   .header {
-    padding: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
     height: 40px;
     width: 100%;
     background: $dark;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   .video-container {
     height: calc(100% - 95px);
@@ -652,6 +661,16 @@
     &:hover {
       border-bottom: 1px solid $secondary;
     }
+  }
+
+  .mode {
+    animation: blinkAnime 2s infinite alternate;
+  }
+
+  @keyframes blinkAnime{
+    0% { opacity: 1 }
+    50% { opacity: 1 }
+    100% { opacity: 0 }
   }
 
 </style>
