@@ -30,7 +30,11 @@
           </div>
         </div>
         <div class="meeting-list py-3">
+          <div v-if="meetings.length == 0" class="h-100 w-100 d-flex justify-content-center align-items-center">
+            <span>予定されているミーティングはありません</span>
+          </div>
           <div
+            v-else
             v-for="meeting in meetings"
             :key="meeting.id"
             class="d-flex justify-content-between align-items-start mb-3"
