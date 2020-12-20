@@ -75,3 +75,9 @@
     }
   }
 </script>
+
+<style lang="scss" scoped>
+  .error {
+    border: 1px solid $danger;
+  }
+</style>

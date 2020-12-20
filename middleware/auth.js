@@ -1,6 +1,4 @@
 export default async function ({ app, store, route, redirect }) {
-  console.log(route.path)
-  console.log(app.$cookies)
   if(route.path == '/auth/login' || route.path == '/auth/signup' || route.path == '/auth/registername'){
     return
   }
@@ -15,7 +13,6 @@ export default async function ({ app, store, route, redirect }) {
       redirect('/auth/registername')
     }
   } catch(e) {
-    console.log(e)
     redirect('/auth/login')
   }
 }

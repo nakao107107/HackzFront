@@ -22,7 +22,6 @@ export const actions = {
     const { data, error } = await this.$http().get(
       `/meetings/${meetingId}`
     )
-    console.log(data)
     if (error) {
       throw new Error('ミーティングの取得に失敗しました')
     }

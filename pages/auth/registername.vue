@@ -5,14 +5,25 @@
       <h2 class="fas fa-spinner fa-spin"></h2>
     </div>
     <div class="login-form" v-else>
-      <h5 class="font-weight-bold text-white mb-3">名前の登録</h5>
+      <h5 class="font-weight-bold text-white mb-3">基本情報登録</h5>
       <div class="form-group">
+        <label for="">氏名</label>
         <input
           type="text"
           class="form-control text-white"
-          v-model="name"
+          v-model="input.name"
           placeholder="使用する名前を入力して下さい"
         >
+      </div>
+      <div class="form-group">
+        <label for="">プラン</label>
+        <select
+          class="form-control text-white"
+          v-model="input.plan"
+        >
+          <option value="student">学生</option>
+          <option value="teacher">教師</option>
+        </select>
       </div>
       <div class="form-group text-right">
         <button class="btn btn-secondary font-weight-bold" @click="registerName">登録</button>
@@ -28,15 +39,23 @@
       return {
         status: {
           isSubmitting: false,
+          isError: false
         },
-        name: ''
+        input: {
+          name: '',
+          plan: 'teacher'
+        }
       }
     },
     methods: {
       async registerName() {
+        if(!this.input.name || !this.input.plan){
+          status.isError = true
+          return
+        }
         this.status.isSubmitting = true
         try {
-          await this.$store.dispatch('auth/registerName', this.name)
+          await this.$store.dispatch('auth/registerName', this.input)
           this.$router.push('/')
         } catch (e) {
           this.status.isSubmitting = false

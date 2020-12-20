@@ -6,13 +6,17 @@
       style="object-fit: contain"
       alt="ooom">
     <el-popover
-      width="300px"
+      width="400px"
     >
       <div>
         <div class="p-3 profile-box">
           <span class="text-white font-weight-bold">{{profile.name}}</span>
           <br>
-          <span class="text-white font-weight-bold">{{profile.email}}</span>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="text-white font-weight-bold d-inline-block mr-2">{{profile.email}}</span>
+            <span class="badge badge-success mr-2" v-if="profile.plan == 'student'">学生プラン</span>
+            <span class="badge badge-secondary" v-else>教職プラン</span>
+          </div>
         </div>
         <div class="signout p-2" @click="signout">
           サインアウト

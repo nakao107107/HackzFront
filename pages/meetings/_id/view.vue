@@ -123,6 +123,7 @@
           class="btn footer-btn"
           @click="switchLoadingStatus"
           :disabled="!status.isVideoOn || status.isRecording || status.isRepeating"
+          v-if="profile.plan == 'student'"
         >
           <i class="fas fa-spinner text-white" :class="{'fa-spin': status.isLoading}"></i>
           <span>通信不良</span>
@@ -131,12 +132,13 @@
           class="btn footer-btn"
           @click="switchRecordingStatus"
           :disabled="!status.isVideoOn"
+          v-if="profile.plan == 'student'"
         >
           <i class="fas fa-pause text-white"v-if="status.isRecording"></i>
           <i class="fas fa-play text-white" v-else></i>
           <span>リピート動画</span>
         </button>
-        <button class="btn footer-btn" @click="switchRepeatingStatus" v-if="filePath">
+        <button class="btn footer-btn" @click="switchRepeatingStatus" v-if="profile.plan == 'student' && filePath">
           <i class="fas fa-redo-alt text-white" :class="{'fa-spin': status.isRepeating}"></i>
           <span>リピート</span>
         </button>
@@ -283,7 +285,6 @@
         },
         videoTileWasRemoved: (tileId) => {
           let targetTile = this.videoTileInfo.find((tile) => tile.tileId == tileId)
-          console.log(tileId, targetTile)
           if(!targetTile){
             return
           }

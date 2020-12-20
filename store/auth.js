@@ -37,8 +37,8 @@ export const actions = {
     commit('setLoginStatus', true)
   },
 
-  async registerName({ commit }, name) {
-    const { data, error } = await this.$http().put('/users/profile', {name: name})
+  async registerName({ commit }, params) {
+    const { error } = await this.$http().put('/users/profile', params)
 
     if (error) {
       throw new Error('名前の変更に失敗しました')
@@ -46,7 +46,6 @@ export const actions = {
   },
 
   logout({ commit }) {
-    console.log("store sign out")
     commit('removeToken')
   },
 
